@@ -77,3 +77,16 @@ class Hospital(models.Model):
     # String representation of object
     def __str__(self):
         return str(self.name)
+
+class Specialization(models.Model):
+    specialization_id = models.AutoField(primary_key=True)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, null=True, blank=True)
+
+    specialization_name = models.CharField(max_length=200, null=True, blank=True)
+
+
+    def __str__(self):
+        val1 = str(self.specialization_name)
+        val2 = str(self.hospital)
+        val3 = val1 + ' - ' + val2
+        return str(val3)

@@ -3,9 +3,10 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from django.utils.translation import gettext_lazy as _
 
-from book.models import User,Hospital
+from book.models import User, Hospital, Specialization
 
 admin.site.register(Hospital)
+admin.site.register(Specialization)
 
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
