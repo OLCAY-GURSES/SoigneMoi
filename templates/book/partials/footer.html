@@ -38,20 +38,20 @@
       <ul class="box">
         <li class="link_name">Compte</li>
         <li><a href="">Mon compte</a></li>
-
+        {% if user.is_authenticated %}
         <li><a href="">Profile</a></li>
-
+        {% else %}
         <li><a href="">Profile</a></li>
-
+        {% endif %}
         <li><a href="">Mes séjours</a></li>
       </ul>
-
+      {% if not user.is_authenticated %}
       <ul class="box input-box">
         <li class="link_name">S'inscrire</li>
 
-
+        <li><a href="{% url 'patient-register' %}"><input type="button" value="Créer un compte"></a></li>
       </ul>
-
+      {% endif %}
     </div>
   </div>
   <div class="bottom-details">

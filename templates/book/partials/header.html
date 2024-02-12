@@ -32,8 +32,9 @@
       </li>
 
 
+      {% if user.is_authenticated and user.is_patient %}
       <li><a href="" style="text-decoration: none;">Hôpitals</a></li>
-
+      {% endif %}
 
       <li>
         <a href=""style="text-decoration: none;">Nos spécialités</a>
@@ -43,6 +44,13 @@
       </li>
 
 
+      {% if user.is_authenticated and user.is_patient  %}
+      <li><a href="" style="text-decoration: none;">Chercher Docteurs</a></li>
+      {% endif %}
+
+       {% if user.is_authenticated and user.is_patient %}
+      <li><a href="{% url 'patient-dashboard' %}"style="text-decoration: none;">Patient Dashboard</a></li>
+      {% endif %}
 
 
 
@@ -54,11 +62,11 @@
 
     {% if user.is_authenticated %}
     <li class="nav-item">
-      <a class="nav-link header-login" href="">Déconnexion</a>
+      <a class="nav-link header-login" href="{% url 'logout' %}">Déconnexion</a>
     </li>
     {% else %}
     <li class="nav-item">
-      <a class="nav-link header-login" href="" >Connexion</a>
+      <a class="nav-link header-login" href="{% url 'login' %}" >Connexion</a>
     </li>
     {% endif %}
   </ul>

@@ -8,6 +8,14 @@ urlpatterns = [
 
     path('', views.home, name='hospital_home'),
 
+    path('patient-register/', views.patient_register, name='patient-register'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logoutUser, name='logout'),
+    path('change-password/<int:pk>', views.change_password, name='change-password'),
+    path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
+    path('profile-settings/', views.profile_settings, name='profile-settings'),
+
+
 
 ]
 
