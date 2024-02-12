@@ -1,0 +1,51 @@
+
+{% load static %}
+<body>
+    <div class="profile-sidebar">
+      <div class="widget-profile pro-widget-content">
+        <div class="profile-info-widget">
+
+          <div class="profile-det-info">
+            <h3>{{patient.first_name}} {{ patient.last_name}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-widget">
+        <nav class="dashboard-menu sidebar">
+          <ul>
+            <li class="active">
+              <a href="{% url 'patient-dashboard' %}" class="nav-link">
+                <i class="fas fa-columns"></i>
+                <span>Espace médicale</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="{% url 'profile-settings' %}" class="nav-link">
+                <i class="fas fa-user-cog"></i>
+                <span>Modifier profile</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'change-password' pk=user.id%}" class="nav-link">
+                <i class="fas fa-lock"></i>
+                <span>Changer mot de passe</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+              </a>
+            </li>
+          </ul>
+
+
+        </nav>
+      </div>
+    </div>
+
+</body>
+
+
+
