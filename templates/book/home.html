@@ -1,0 +1,199 @@
+<!-- home page, "Accueil". -->
+
+{% extends 'book/base.html' %}
+
+{% load static %}
+
+{% block title %}Accueil{% endblock title %}
+
+{% block content %}
+
+
+{% load static %}
+
+<!-- Home Banner -->
+
+<div class="slideshow-container">
+
+  <div class="mySlides fade">
+    <div class="numbertext"></div>
+  <img src="{% static 'SGM/images/slide/slide-1.jpg' %}" style="width: 100%;" />
+    <div class="text">
+      <h1>Bienvenue </h1>
+      <h2>Dans votre centre médical</h2>
+    </div>
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext"></div>
+    <img src="{% static 'SGM/images/slide/slide-2.jpg' %}" style="width: 100%;" />
+    <div class="text">
+      <h1>Les meilleurs </h1>
+      <h2>équipements pour votre santé</h2></div>
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext"></div>
+    <img src="{% static 'SGM/images/slide/slide-3.jpg' %}" style="width: 100%;" />
+    <div class="text">
+      <h1 style="color:white;">Avec</h1>
+      <h2 style="color:white;">les meilleurs docteurs</h2></div>
+    </div>
+  </div>
+
+ <br />
+
+</div>
+<!-- /Home Banner -->
+
+<!-- Clinic and Specialities -->
+<section class="section section-specialities" style="padding-top: 80px">
+  <div class="container-fluid">
+    <div class="section-header text-center">
+      <h2>Nos spécialités</h2>
+      <p class="sub-title">
+      </p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-9">
+        <!-- Slider -->
+        <div class="specialities-slider slider">
+          <!-- Slider Item -->
+          <div class="speicality-item text-center">
+            <div class="speicality-img">
+              <img
+                src="{% static 'SGM/images/specialities/specialities-01.png' %}"
+                class="img-fluid"
+                alt="Speciality"
+              />
+              <span><i class="fa fa-circle" aria-hidden="true"></i></span>
+            </div>
+            <p>Urologie</p>
+          </div>
+          <!-- /Slider Item -->
+
+          <!-- Slider Item -->
+          <div class="speicality-item text-center">
+            <div class="speicality-img">
+              <img
+                src="{% static 'SGM/images/specialities/specialities-02.png' %}"
+                class="img-fluid"
+                alt="Speciality"
+              />
+              <span><i class="fa fa-circle" aria-hidden="true"></i></span>
+            </div>
+            <p>Neurologie</p>
+          </div>
+          <!-- /Slider Item -->
+
+          <!-- Slider Item -->
+          <div class="speicality-item text-center">
+            <div class="speicality-img">
+              <img
+                src="{% static 'SGM/images/specialities/specialities-03.png' %}"
+                class="img-fluid"
+                alt="Speciality"
+              />
+              <span><i class="fa fa-circle" aria-hidden="true"></i></span>
+            </div>
+            <p>Orthopédie</p>
+          </div>
+          <!-- /Slider Item -->
+
+          <!-- Slider Item -->
+          <div class="speicality-item text-center">
+            <div class="speicality-img">
+              <img
+                src="{% static 'SGM/images/specialities/specialities-04.png' %}"
+                class="img-fluid"
+                alt="Speciality"
+              />
+              <span><i class="fa fa-circle" aria-hidden="true"></i></span>
+            </div>
+            <p>Cardiologie</p>
+          </div>
+          <!-- /Slider Item -->
+
+          <!-- Slider Item -->
+          <div class="speicality-item text-center">
+            <div class="speicality-img">
+              <img
+                src="{% static 'SGM/images/specialities/specialities-05.png' %}"
+                class="img-fluid"
+                alt="Speciality"
+              />
+              <span><i class="fa fa-circle" aria-hidden="true"></i></span>
+            </div>
+            <p>Dentaire</p>
+          </div>
+          <!-- /Slider Item -->
+        </div>
+        <!-- /Slider -->
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Clinic and Specialities -->
+
+<!-- Availabe Features -->
+<section class="section section-features">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-5 features-img">
+        <img
+          src="{% static 'SGM/images/hospi.jpg' %}"
+          class="img-fluid"
+          alt="Feature"
+        />
+      </div>
+      <div class="col-md-7">
+        <div class="section-header">
+          <h2 class="mt-2">Hôpital disponible</h2>
+          <p>
+           Ici, vous pouvez accéder à de nombreux hôpitaux.
+            Vous pouvez prendre rendez-vous avec votre médecin et obtenir toutes les informations sur l'hôpital à partir d'ici.
+          </p>
+        </div>
+        <div class="features-slider slider">
+          <!-- Slider Item -->
+          {% for hospital in hospitals %}
+          <div class="feature-item text-center">
+            <img
+              src="{{ hospital.featured_image.url }}"
+              class="img-fluid"
+              alt="Feature"
+            />
+            <p>{{hospital.name}}</p>
+          </div>
+          {% endfor %}
+          <!-- /Slider Item -->
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</div>
+
+<script>
+      var slideIndex = 0;
+      showSlides();
+
+      function showSlides() {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {
+          slideIndex = 1;
+        }
+        slides[slideIndex - 1].style.display = "block";
+        setTimeout(showSlides, 3000); // Change image every 3 seconds
+      }
+    </script>
+
+
+{% endblock content %}

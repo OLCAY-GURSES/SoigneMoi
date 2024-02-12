@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+{% load static %}
+<head>
+
+    <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Accueil</title>
+
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0"/>
+    <title>SoigneMoi</title>
+
+    <!-- Favicons -->
+    <link type="image/x-icon" href="{% static 'SGM/images/LOGO/icon.png' %}" rel="icon"/>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/css/bootstrap.min.css' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/plugins/fontawesome/css/fontawesome.min.css' %}"/>
+
+    <link rel="stylesheet" href="{% static 'SGM/plugins/fontawesome/css/all.min.css' %}"/>
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/css/style.css' %}"/>
+
+   <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/css/bootstrap-datetimepicker.min.css' %}"/>
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/plugins/select2/css/select2.min.css' %}"/>
+
+    <link href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" rel="stylesheet" />
+
+
+
+
+
+  <title>{% block title %} {% endblock title %}</title>
+
+</head>
+
+<body>
+
+  <header>
+    {% include './partials/header.html' %}
+  </header>
+
+    <!-- main -->
+  {% block content %}
+  {% endblock content %}
+
+      <!-- footer -->
+  {% include './partials/footer.html' %}
+     <!-- /Main Wrapper -->
+
+    <!-- jQuery -->
+    <script src="{% static 'SGM/js/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="{% static 'SGM/js/popper.min.js' %}"></script>
+    <script src="{% static 'SGM/js/bootstrap.min.js' %}"></script>
+
+    <!-- Slick JS -->
+    <script src="{% static 'SGM/Outside_assets/js/slick.js' %}"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'SGM/Outside_assets/js/script.js' %}"></script>
+
+    <script src="{% static 'SGM/js/Checkbox.js' %}"></script>
+
+    <!-- Sticky Sidebar JS -->
+    <script src="{% static 'SGM/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
+    <script src="{% static 'SGM/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
+
+    <!-- Searchbar JS -->
+    <script src="{% static 'SGM/js/sidebar.js' %}"></script>
+
+    <!-- Select2 JS -->
+    <script src="{% static 'SGM/plugins/select2/js/select2.min.js' %}"></script>
+
+    <!-- Datetimepicker JS -->
+    <script src="{% static 'SGM/js/moment.min.js' %}"></script>
+    <script src="{% static 'SGM/js/moment.local.js' %}"></script>
+
+    <script src="{% static 'SGM/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+
+
+
+</body>
+</html>
