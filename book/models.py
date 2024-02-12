@@ -62,3 +62,18 @@ class Admin(models.Model):
 
     def __str__(self):
         return str(self.user.email)
+
+
+class Hospital(models.Model):
+
+    hospital_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    featured_image = models.ImageField(upload_to='hospitals/', default='hospitals/default.png', null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)
+    phone_number = models.CharField(max_length=10,null=True, blank=True)
+
+    # String representation of object
+    def __str__(self):
+        return str(self.name)
