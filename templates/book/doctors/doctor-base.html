@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+{% load static %}
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0"/>
+
+    <title>Doctor dashboard</title>
+
+   <!-- Favicon -->
+
+	<link rel="shortcut icon" type="image/x-icon" href="{% static 'SGM/images/LOGO/icon.png' %}">
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet" href="{% static 'SGM/css/bootstrap.min.css' %}"/>
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/plugins/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'SGM/plugins/fontawesome/css/all.min.css' %}"/>
+
+    <link
+      rel="stylesheet" href="{% static 'SGM/plugins/select2/css/select2.min.css' %}"/>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}"
+    />
+
+
+    <!-- Fancybox CSS -->
+    <link rel="stylesheet" href="% static 'SGM/plugins/fancybox/jquery.fancybox.min.css' %"/>
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'SGM/css/style.css' %}"/>
+
+  <title>{% block title %} {% endblock title %}</title>
+
+  </head>
+  <body>
+        <!-- Header -->
+
+      <header class="header">{% include 'book/doctors/doctor-navbar.html' %}</header>
+      <!-- /Header -->
+
+        <!-- main -->
+  {% block content %}
+  {% endblock content %}
+
+      <!-- footer -->
+  {% include '../partials/footer.html' %}
+     <!-- /Main Wrapper -->
+
+
+    <!-- jQuery -->
+    <script src="{% static 'SGM/js/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="{% static 'SGM/js/popper.min.js' %}"></script>
+    <script src="{% static 'SGM/js/bootstrap.min.js' %}"></script>
+
+    <!-- Sticky Sidebar JS -->
+    <script src="{% static 'SGM/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
+    <script src="{% static 'SGM/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'SGM/Outside_assets/js/script.js' %}"></script>
+
+    <!-- Searchbar JS -->
+    <script src="{% static 'SGM/js/sidebar.js' %}"></script>
+        <!-- Select2 JS -->
+    <script src="{% static 'SGM/plugins/select2/js/select2.min.js' %}"></script>
+
+    <!-- Bootstrap Tagsinput JS -->
+    <script src="{% static 'SGM/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.js' %}"></script>
+
+    <!-- Profile Settings JS -->
+    <script src="{% static 'SGM/js/doctor-profile-settings.js' %}"></script>
+
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        {% endfor %}
+    </script>
+  {% endif %}
+
+
+  </body>
+
+</html>

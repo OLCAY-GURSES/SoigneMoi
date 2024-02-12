@@ -3,19 +3,20 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from django.utils.translation import gettext_lazy as _
 
-from book.models import User, Hospital, Specialization, Admin, Patient
+from book.models import User, Hospital, Specialization, Admin, Patient, Doctor
 
 admin.site.register(Hospital)
 admin.site.register(Specialization)
 admin.site.register(Admin)
 admin.site.register(Patient)
+admin.site.register(Doctor)
 
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
 
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'is_admin','is_patient')}),
+        (None, {'fields': ('email', 'password', 'is_admin','is_patient','is_doctor')}),
 
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
@@ -27,6 +28,6 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('email', 'is_staff', 'is_admin','is_patient')
+    list_display = ('email', 'is_staff', 'is_admin','is_patient','is_doctor')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

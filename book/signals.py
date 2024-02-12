@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Patient, User, Admin
+from .models import Patient, User, Admin, Doctor
 
 import random
 import string
@@ -22,6 +22,10 @@ def createPatient(sender, instance, created, **kwargs):
             user = instance
             Patient.objects.create(
                 user=user, serial_number=generate_random_string())
+        elif instance.is_doctor:
+            user = instance
+            Doctor.objects.create(
+                user=user)
 
 
 
@@ -37,3 +41,14 @@ def updateUser(sender, instance, created, **kwargs):
         user.email = user.email
         user.save()
 
+@receiver(post_save, sender=Doctor)
+def updateUser(sender, instance, created, **kwargs):
+    # user.profile or below (1-1 relationship goes both ways)
+    doctor = instance
+    user = doctor.user
+
+    if created == False:
+        user.last_name = doctor.last_name
+        user.first_name = doctor.first_name
+        user.email = user.email
+        user.save()

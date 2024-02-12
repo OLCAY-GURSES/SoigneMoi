@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
 from book.forms import CustomUserCreationForm
-from book.models import Hospital, User, Patient
+from book.models import Hospital, User, Patient, Doctor
 
 
 # Create your views here.
@@ -47,6 +47,9 @@ def login_user(request):
             if request.user.is_patient:
                 messages.success(request, "L'utilisateur s'est connecté avec succès")
                 return redirect('patient-dashboard')
+            if request.user.is_doctor:
+                messages.success(request, 'Bonjour Docteur')
+                return redirect('doctor-dashboard')
 
             else:
                 messages.error(request, "Informations d'identification non valides.")
@@ -112,7 +115,6 @@ def profile_settings(request):
             last_name = request.POST.get('last_name')
             date_of_bird = request.POST.get('date_of_bird')
             age = request.POST.get('age')
-
             phone_number = request.POST.get('phone_number')
             address = request.POST.get('address')
 
@@ -149,3 +151,57 @@ def change_password(request, pk):
             messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
             return redirect("change-password", pk)
     return render(request, 'book/password/change-password.html', context)
+
+
+
+@csrf_exempt
+@login_required(login_url="login")
+@cache_control(no_cache=True, must_revalidate=True)
+def doctor_dashboard(request):
+
+    if request.user.is_authenticated:
+        if request.user.is_doctor:
+            # doctor = Doctor_Information.objects.get(user_id=pk)
+            doctor = Doctor.objects.get(user=request.user)
+            pass
+
+        else:
+            return redirect('logout')
+
+        context = {'doctor': doctor}
+        return render(request, 'book/doctors/doctor-dashboard.html', context)
+    else:
+        return redirect('login')
+
+
+
+@csrf_exempt
+@login_required(login_url="doctor-login")
+def doctor_profile_settings(request):
+    # profile_Settings.js
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(user=request.user)
+
+        if request.method == 'GET':
+            context = {'doctor': doctor}
+            return render(request, 'book/doctors/doctor-profile-settings.html', context)
+
+        elif request.method == 'POST':
+
+            doc_first_name = request.POST.get('first_name')
+            doc_last_name = request.POST.get('last_name')
+            number = request.POST.get('number')
+            date_of_bird = request.POST.get('date_of_bird')
+
+            doctor.first_name = doc_first_name
+            doctor.last_name = doc_last_name
+            doctor.phone_number = number
+            doctor.date_of_bird = date_of_bird
+
+            doctor.save()
+
+            # context = {'degree': degree}
+            messages.success(request, 'Profile Mise à jour')
+            return redirect('doctor-dashboard')
+    else:
+        redirect('logout')

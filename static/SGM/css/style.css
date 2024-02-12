@@ -1861,6 +1861,17 @@ button.bg-danger:hover {
     border-bottom: 1px solid #f0f0f0;
 	display: none;
 }
+
+.log {
+	padding: 0px 0px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;display: block;font-family: Verdana, sans-serif;
+    margin: 0;box-sizing: border-box;
+    font-family: Poppins,sans-serif;
+    text-decoration: none;
+    list-style: none;"
+}
 .menu-logo img {
     height: 40px;
 }

@@ -51,6 +51,7 @@ class User(AbstractUser):
 
     is_admin = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
     login_status = models.BooleanField(default=False)
 
     def __str__(self):
@@ -103,6 +104,24 @@ class Patient(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     date_of_bird = models.CharField(max_length=200, null=True, blank=True)
     serial_number = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user.email)
+
+class Doctor(models.Model):
+    doctor_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='profile')
+    first_name = models.CharField(max_length=200, null=True)
+    last_name = models.CharField(max_length=200, null=True)
+    specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True)
+    phone_number = models.CharField(max_length=200, null=True, blank=True)
+    date_of_bird = models.CharField(max_length=200, null=True, blank=True)
+    #limite_patient = models.IntegerField(default=5)
+    #work_start_day = models.DateField(max_length=200, null=True, blank=True)
+    #work_end_day = models.DateField(max_length=200, null=True, blank=True)
+
+    # ForeignKey --> one to one relationship with Hospital_Information model.
+    hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return str(self.user.email)

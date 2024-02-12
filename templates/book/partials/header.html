@@ -12,10 +12,11 @@
      <a href="/" class="navbar-brand logo">
       <img src="{% static 'SGM/images/LOGO/logo.png' %}" class="img-fluid" alt="Logo"/>
      </a>
+
   </div>
   <div class="main-menu-wrapper">
     <div class="menu-header">
-       <a href="/" class="menu-logo">
+       <a href="" class="menu-logo">
         <img
           src="{% static 'SGM/images/LOGO/logo.png' %}"
           class="img-fluid"
@@ -25,6 +26,7 @@
       <a id="menu_close" class="menu-close" href="javascript:void(0);">
         <i class="fas fa-times"></i>
       </a>
+
     </div>
     <ul class="main-nav">
       <li>
@@ -52,9 +54,25 @@
       <li><a href="{% url 'patient-dashboard' %}"style="text-decoration: none;">Patient Dashboard</a></li>
       {% endif %}
 
-
-
     </ul>
+
+      <div class="menu-header" style="background-color: #32DFFF;padding: 15px 20px;">
+        {% if user.is_authenticated and user.is_patient %}
+       <a class="log" href="{% url 'logout' %}">Déconnexion</a>
+        {% else %}
+
+      <a class="log"  href="{% url 'login' %}" >Connexion</a>
+
+    {% endif %}
+
+
+    </div>
+
+    </div>
+
+
+
+
   </div>
 
   <ul class="nav header-navbar-rht">
