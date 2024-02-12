@@ -50,6 +50,8 @@ class User(AbstractUser):
     objects = UserManager()
 
     is_admin = models.BooleanField(default=False)
+    is_patient = models.BooleanField(default=False)
+    login_status = models.BooleanField(default=False)
 
     def __str__(self):
 
@@ -90,3 +92,17 @@ class Specialization(models.Model):
         val2 = str(self.hospital)
         val3 = val1 + ' - ' + val2
         return str(val3)
+
+
+class Patient(models.Model):
+    patient_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='patient')
+    first_name = models.CharField(max_length=200, null=True, blank=True)
+    last_name = models.CharField(max_length=200, null=True, blank=True)
+    phone_number = models.CharField(max_length=10,null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    date_of_bird = models.CharField(max_length=200, null=True, blank=True)
+    serial_number = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user.email)

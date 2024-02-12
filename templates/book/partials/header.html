@@ -43,9 +43,6 @@
       </li>
 
 
-
-
-
     </ul>
   </div>
 
@@ -54,7 +51,7 @@
 
     {% if user.is_authenticated %}
     <li class="nav-item">
-      <a class="nav-link header-login" href="">Déconnexion</a>
+      <a class="nav-link header-login" href="{% url 'logout' %}">Déconnexion</a>
     </li>
     {% else %}
     <li class="nav-item">
