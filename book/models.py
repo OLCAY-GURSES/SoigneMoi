@@ -102,7 +102,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=200, null=True, blank=True)
     phone_number = models.CharField(max_length=10,null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
-    date_of_bird = models.CharField(max_length=200, null=True, blank=True)
+    date_of_bird = models.DateField(null=True, blank=True)
     serial_number = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
@@ -115,7 +115,7 @@ class Doctor(models.Model):
     last_name = models.CharField(max_length=200, null=True)
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=200, null=True, blank=True)
-    date_of_bird = models.CharField(max_length=200, null=True, blank=True)
+    date_of_bird = models.DateField(null=True, blank=True)
     #limite_patient = models.IntegerField(default=5)
     #work_start_day = models.DateField(max_length=200, null=True, blank=True)
     #work_end_day = models.DateField(max_length=200, null=True, blank=True)

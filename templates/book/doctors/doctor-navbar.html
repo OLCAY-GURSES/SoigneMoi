@@ -17,7 +17,7 @@
     <div class="menu-header">
       <a href="{% url 'hospital_home'%}" class="menu-logo">
         <img
-          src="{% static 'HealthStack-System/images/Normal/logo.jpg' %}"
+          src="{% static 'SGM/images/LOGO/logo.jpg' %}"
           class="img-fluid"
           alt="Logo"
         />
@@ -34,17 +34,24 @@
       <li>
         <a href="{% url 'doctor-dashboard'%}">Mon espace</a>
       </li>
-      {% if user.is_authenticated %}
-    <li class="nav-item">
-      <a class="nav-link header-login" href="{% url 'logout' %}">Déconnexion</a>
-    </li>
-    {% else %}
-    <li class="nav-item">
-      <a class="nav-link header-login" href="{% url 'login' %}" >Connexion</a>
-    </li>
-    {% endif %}
+
 
     </ul>
+
+    <div class="menu-header" style="background-color: #32DFFF;padding: 15px 20px;">
+
+      {% if user.is_authenticated %}
+
+      <a class="log" href="{% url 'logout' %}">Déconnexion</a>
+
+      {% else %}
+
+      <a class="log"  href="{% url 'login' %}" >Connexion</a>
+
+      {% endif %}
+
+
+    </div>
 
   </div>
 
