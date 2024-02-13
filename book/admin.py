@@ -9,10 +9,8 @@ admin.site.register(Hospital)
 admin.site.register(Specialization)
 admin.site.register(Admin)
 admin.site.register(Patient)
+admin.site.register(Doctor)
 
-class DoctorAdmin(admin.ModelAdmin):
-    list_display = ['first_name','last_name','specialization']
-admin.site.register(Doctor, DoctorAdmin)
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
