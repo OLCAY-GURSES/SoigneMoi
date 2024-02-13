@@ -3,13 +3,20 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from django.utils.translation import gettext_lazy as _
 
-from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment
+from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment, \
+    Prescription, Prescription_medicine, Prescription_test
 
 admin.site.register(Hospital)
 admin.site.register(Specialization)
 admin.site.register(Admin)
 admin.site.register(Patient)
 admin.site.register(Doctor)
+admin.site.register(Prescription)
+
+admin.site.register(Prescription_medicine)
+
+admin.site.register(Prescription_test)
+
 
 class DoctorTimeSlotsAdmin(admin.ModelAdmin):
     list_display = ['Doctor_first_name','Doctor_last_name', 'doc_start_date', 'doc_end_date']

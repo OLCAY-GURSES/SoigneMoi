@@ -160,3 +160,49 @@ class Appointment(models.Model):
 
     class Meta:
         verbose_name_plural = "Appointment"
+
+
+
+
+class Prescription(models.Model):
+    # medicine name, quantity, days, time, description, test, test_descrip
+    prescription_id = models.AutoField(primary_key=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, blank=True)
+    create_date = models.DateField(null=True, blank=True)
+    medicine_name = models.CharField(max_length=200, null=True, blank=True)
+    quantity = models.CharField(max_length=200, null=True, blank=True)
+    days = models.CharField(max_length=200, null=True, blank=True)
+    time = models.CharField(max_length=200, null=True, blank=True)
+    medicine_description = models.TextField(null=True, blank=True)
+    test_name = models.CharField(max_length=200, null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)
+    extra_information = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.patient.last_name)
+
+
+class Prescription_medicine(models.Model):
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, null=True, blank=True)
+    medicine_id = models.AutoField(primary_key=True)
+    medicine_name = models.CharField(max_length=200, null=True, blank=True)
+    quantity = models.CharField(max_length=200, null=True, blank=True)
+    duration = models.CharField(max_length=200, null=True, blank=True)
+    frequency = models.CharField(max_length=200, null=True, blank=True)
+    instruction = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.prescription.prescription_id)
+
+
+class Prescription_test(models.Model):
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, null=True, blank=True)
+    test_id = models.AutoField(primary_key=True)
+    test_name = models.CharField(max_length=200, null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.prescription.prescription_id)
+
+
