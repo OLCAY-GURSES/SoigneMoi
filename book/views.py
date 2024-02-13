@@ -14,8 +14,7 @@ from book.models import Hospital, User, Patient, Doctor
 @csrf_exempt
 def home(request):
     hospitals = Hospital.objects.all()
-    doctors = Doctor.objects.all()
-    context = {'hospitals': hospitals,'doctors':doctors}
+    context = {'hospitals': hospitals}
     return render(request, 'book/home.html', context)
 
 
@@ -206,4 +205,3 @@ def doctor_profile_settings(request):
             return redirect('doctor-dashboard')
     else:
         redirect('logout')
-
