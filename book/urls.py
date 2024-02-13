@@ -17,7 +17,6 @@ urlpatterns = [
 
     path('doctor-dashboard/',views.doctor_dashboard, name='doctor-dashboard'),
     path('doctor-profile-settings/', views.doctor_profile_settings, name='doctor-profile-settings'),
-    path('doctor-profile/<int:pk>/', views.doctor_profile, name='doctor-profile'),
 
 
 
