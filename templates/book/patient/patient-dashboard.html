@@ -75,6 +75,18 @@
                                 <th>Date séjours</th>
                               </tr>
                             </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                  <td>
+                                    <h4 class="mb-0">{{ appointment.doctor.first_name }}</h4>
+                                  </td>
+                                  <td>{{appointment.start_date}}</td>
+                                   <td>{{appointment.end_date}}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+
                           </table>
                         </div>
                       </div>

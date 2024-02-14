@@ -1,3 +1,5 @@
+import datetime
+from datetime import datetime
 from django.contrib.auth import  authenticate,login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -6,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
 from book.forms import CustomUserCreationForm
-from book.models import Hospital, User, Patient, Doctor
+from book.models import Hospital, User, Patient, Doctor, Appointment
 
 
 # Create your views here.
@@ -92,8 +94,8 @@ def patient_dashboard(request):
     if request.user.is_patient:
 
         patient = Patient.objects.get(user=request.user)
-
-        context = {'patient': patient}
+        appointments = Appointment.objects.filter(patient=patient).order_by('-start_date')
+        context = {'patient': patient, 'appointments': appointments}
     else:
         return redirect('logout')
 
@@ -158,18 +160,27 @@ def change_password(request, pk):
 @login_required(login_url="login")
 @cache_control(no_cache=True, must_revalidate=True)
 def doctor_dashboard(request):
-
     if request.user.is_authenticated:
         if request.user.is_doctor:
-            # doctor = Doctor_Information.objects.get(user_id=pk)
-            doctor = Doctor.objects.get(user=request.user)
-            pass
 
-        else:
-            return redirect('logout')
+            if request.user.is_authenticated:
+                if request.user.is_doctor:
+                    # doctor = Doctor_Information.objects.get(user_id=pk)
+                    doctor = Doctor.objects.get(user=request.user)
 
-        context = {'doctor': doctor}
-        return render(request, 'book/doctors/doctor-dashboard.html', context)
+                    current_date = datetime.date.today()
+                    current_date_str = str(current_date)
+                    # today_appointments = Appointment.objects.filter(doctor_time_slots__start_date__lte=current_date,doctor_time_slots__end_date__gte=current_date, doctor=doctor)
+                    today_appointments = Appointment.objects.filter(start_date__lte=current_date, end_date__gte=current_date, doctor=doctor)
+
+                else:
+                    return redirect('doctor-logout')
+
+                context = {'doctor': doctor,
+                           'today_appointments': today_appointments,
+                           'current_date': current_date_str,
+                           }
+                return render(request, 'book/doctors/doctor-dashboard.html', context)
     else:
         return redirect('login')
 

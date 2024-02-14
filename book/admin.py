@@ -31,7 +31,7 @@ class DoctorTimeSlotsAdmin(admin.ModelAdmin):
 admin.site.register(DoctorTimeSlots, DoctorTimeSlotsAdmin)
 
 class AppointmentsAdmin(admin.ModelAdmin):
-    list_display = ['id','patient_last_name','patient_first_name', 'appointment_date','start_date', 'end_date','doctors']
+    list_display = ['appointment_id','patient_last_name','patient_first_name', 'appointment_date','start_date', 'end_date','doctors']
 
     def patient_last_name(self, appointment):
         return appointment.patient.last_name

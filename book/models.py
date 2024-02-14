@@ -142,7 +142,7 @@ class DoctorTimeSlots(models.Model):
 
 class Appointment(models.Model):
 
-    id = models.AutoField(primary_key=True)
+    appointment_id = models.AutoField(primary_key=True)
     doctor_time_slots = models.ForeignKey(DoctorTimeSlots, null=True, on_delete=models.CASCADE)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
