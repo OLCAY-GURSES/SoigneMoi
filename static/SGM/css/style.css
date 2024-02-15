@@ -1861,17 +1861,6 @@ button.bg-danger:hover {
     border-bottom: 1px solid #f0f0f0;
 	display: none;
 }
-
-.log {
-	padding: 0px 0px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 500;display: block;font-family: Verdana, sans-serif;
-    margin: 0;box-sizing: border-box;
-    font-family: Poppins,sans-serif;
-    text-decoration: none;
-    list-style: none;"
-}
 .menu-logo img {
     height: 40px;
 }
@@ -2267,8 +2256,8 @@ footer .bottom-details .bottom_text{
 -----------------------*/
 
 
-.section-search { 
-	background: #f9f9f9 url(..search-bg.png)no-repeat bottom center; 
+.section-search {
+	background: #f9f9f9 url(..search-bg.png)no-repeat bottom center;
     min-height: 450px;
     background-size: 100% auto;
     position: relative;
@@ -2321,7 +2310,7 @@ home-image{
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-}	
+}
 .search-box .form-control {
     border: 1px solid #ccc;
     box-shadow: inset 0 0px 0px rgba(0,0,0,.075);
@@ -2904,11 +2893,14 @@ home-image{
 	display: flex;
 }
 .doc-info-left {
+    margin-top:20px;
+    margin-left:20px;
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
 }
 .doc-info-right {
+    margin-top:20px;
     margin-left: auto;
     -ms-flex: 0 0 205px;
     flex: 0 0 205px;
@@ -2920,13 +2912,11 @@ home-image{
     margin-right: 20px;
     width: 150px;
 }
-.doctor-img img {
-	border-radius: 5px;
-}
+
 .doc-department {
     color: #32DFFF;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin-top: 10px;
 }
 .doc-department img {
     width: 19px;
@@ -3041,10 +3031,11 @@ home-image{
     width: 100%;
 }
 .clinic-booking a.view-pro-btn:hover, .clinic-booking a.view-pro-btn:focus {
-	background: #32DFFF; 
+	background: #32DFFF;
 	color: #fff;
 }
 .clinic-booking a.apt-btn {
+ margin-top: 15px;
     background-color: #32DFFF;
     color: #fff;
 }
@@ -3105,8 +3096,8 @@ home-image{
     font-weight: 600;
     padding: 20px;
 }
-.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active, 
-.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:hover, 
+.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active,
+.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:hover,
 .user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:focus {
 	border-bottom-width: 3px;
 	color: #32DFFF;
@@ -3841,7 +3832,7 @@ home-image{
 	flex-wrap: wrap;
 }
 .schedule-nav .nav-tabs li {
-	margin: 5px 15px 5px 0; 
+	margin: 5px 15px 5px 0;
 	display: inline-block;
 }
 .schedule-nav .nav-tabs li:last-child {
@@ -4195,7 +4186,7 @@ home-image{
 .fc-unthemed .fc-popover {
 	border-color: #f3f3f3;
 }
-.fc-basic-view .fc-day-number, 
+.fc-basic-view .fc-day-number,
 .fc-basic-view .fc-week-number {
     padding: 2px 5px;
 }
@@ -4662,7 +4653,7 @@ home-image{
 }
 
 @media only screen and (max-width: 1399px) {
-	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name, 
+	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name,
 	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-last-chat {
 		max-width: 180px;
 	}
@@ -4687,7 +4678,7 @@ home-image{
 		padding-left: 20px;
 		padding-right: 20px;
 	}
-	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name, 
+	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name,
 	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-last-chat {
 		max-width: 150px;
 	}
@@ -4943,7 +4934,7 @@ home-image{
 	.container-fluid {
 		padding-left: 15px;
 		padding-right: 15px;
-	}	
+	}
 	.card {
 		margin-bottom: 20px;
 	}
@@ -4967,7 +4958,7 @@ home-image{
 		margin: 0 15px;
 		padding: 15px;
 	}
-	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name, 
+	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name,
 	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-last-chat {
 		max-width: 250px;
 	}
@@ -5091,7 +5082,7 @@ home-image{
 	}
 	.nav-tabs.nav-tabs-bottom > li > a.active, .nav-tabs.nav-tabs-bottom > li > a.active:hover, .nav-tabs.nav-tabs-bottom > li > a.active:focus {
 		background-color: #f5f5f5;
-	}	
+	}
 	.nav-tabs.nav-justified {
 		border-bottom: 1px solid #ddd;
 	}
@@ -5187,8 +5178,8 @@ home-image{
 		border-bottom: 0;
 		padding: .5rem 1rem;
 	}
-	.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active, 
-	.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:hover, 
+	.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active,
+	.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:hover,
 	.user-tabs .nav-tabs.nav-tabs-bottom > li > a.active:focus {
 		border-left-width: 2px;
 		color: #32DFFF;
@@ -5459,6 +5450,7 @@ home-image{
 		margin-bottom: 15px;
 	}
 	.clinic-booking a.apt-btn {
+
 		width: 100%;
 	}
 	.chat-cont-left .chat-users-list a.media .media-body > div:first-child .user-name, 
