@@ -2,6 +2,7 @@ import datetime
 from datetime import datetime
 from django.contrib.auth import  authenticate,login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +10,7 @@ from django.contrib import messages
 
 from book.forms import CustomUserCreationForm
 from book.models import Hospital, User, Patient, Doctor, Appointment
+from book.utils import paginateHospitals
 
 
 # Create your views here.
@@ -18,6 +20,15 @@ def home(request):
     hospitals = Hospital.objects.all()
     context = {'hospitals': hospitals}
     return render(request, 'book/home.html', context)
+
+
+@csrf_exempt
+def list_hospital(request):
+    hospitals = Hospital.objects.all()
+    custom_range, hospitals = paginateHospitals(request, hospitals, 3)
+
+    context = {'hospitals': hospitals,'custom_range': custom_range}
+    return render(request, 'book/administration/list-hospital.html', context)
 
 
 @csrf_exempt
@@ -216,3 +227,30 @@ def doctor_profile_settings(request):
             return redirect('doctor-dashboard')
     else:
         redirect('logout')
+
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def search(request):
+    if request.user.is_authenticated and request.user.is_patient:
+
+        search_query = ''
+
+        if request.GET.get('search_query'):
+            search_query = request.GET.get('search_query')
+
+        doctors = Doctor.objects.filter(
+            Q(last_name__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(specialization__specialization_name__icontains=search_query)
+
+        )
+
+        patient = Patient.objects.get(user=request.user)
+        context = {'patient': patient, 'doctors': doctors,  'search_query': search_query}
+        return render(request, 'book/doctors/search.html', context)
+    else:
+        logout(request)
+        messages.error(request, 'Non autorisé')
+        return render(request, 'login.html')

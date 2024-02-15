@@ -18,6 +18,8 @@ urlpatterns = [
     path('doctor-dashboard/',views.doctor_dashboard, name='doctor-dashboard'),
     path('doctor-profile-settings/', views.doctor_profile_settings, name='doctor-profile-settings'),
 
+    path('list-hospital/', views.list_hospital, name='list-hospital'),
+    path('search/', views.search, name='search'),
 
 
 

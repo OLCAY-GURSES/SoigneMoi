@@ -1,0 +1,107 @@
+{% extends 'book/base.html' %}
+
+{% load static %}
+
+{% block title %}Search{% endblock title %}
+
+{% block content %}
+
+
+{% load static %}
+
+  <body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-bar">
+				<div class="container-fluid">
+					<div class="row align-items-center">
+
+						<div class="col-md-6 col-6">
+
+							<h2 class="breadcrumb-title">Nos Docteur</h2>
+						</div>
+
+						<div class="col-md-6 col-6">
+							<div class="top-nav-search">
+								<form action="{% url 'search' %}" method="GET">
+									<input type="text" class="form-control" placeholder="médecin ou spécialités" name="search_query" value="{{search_query}}">
+									<button class="btn" type="submit"><i class="fa fa-search"></i></button>
+								</form>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+      <!-- /Breadcrumb -->
+
+      <!-- Page Content -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Profile Sidebar -->
+            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+              <div>{% include 'book/patient/patient-sidebar.html' %}</div>
+            </div>
+            <!-- / Profile Sidebar -->
+
+            <div class="col-md-12 col-lg-8 col-xl-5">
+              {% for doctor in doctors %}
+              <!-- Doctor Widget -->
+              <div class="card">
+                <div class="card-body">
+                  <div class="doctor-widget">
+                    <div class="doc-info-left">
+
+                      <div class="doc-info-cont">
+
+                          <h4 class="doc-name">
+                          <a >Dr. {{doctor.first_name}} {{doctor.last_name}} </a>
+                          </h4>
+
+
+
+                        <h5 class="doc-department"><b>Spécialités: </b>
+                          {{ doctor.specialization.specialization_name }}
+                        </h5>
+
+                        <div class="clinic-details">
+                          <p class="doc-location">
+                            <i class="fas fa-map-marker-alt"></i> <b>Hôpital: </b>
+                            {{doctor.hospital_name}}
+                          </p>
+
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="doc-info-right">
+
+                      <div class="clinic-booking">
+                        <a class="apt-btn">Prendre rendez-vous</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {% endfor %}
+
+              <div class="load-more text-center">
+                <a class="btn btn-primary btn-sm" href="javascript:void(0);"
+                  >Charger plus</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Page Content -->
+    </div>
+
+  </body>
+
+{% endblock content %}
