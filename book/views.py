@@ -1,18 +1,25 @@
-import datetime
-from datetime import datetime
-from django.contrib.auth import  authenticate,login, logout
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.db.models import Count, Q
+from django.utils import formats
+from django.utils import timezone
+from .forms import CustomUserCreationForm
 from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+
+from book.models import Patient, User, Hospital, Admin, Specialization, Doctor, Appointment, Prescription, \
+    DoctorTimeSlots
+
+from django.shortcuts import redirect, render
+from .models import Doctor, Appointment
+
+from django.db.models import Count, F
 from django.contrib import messages
 
-from book.forms import CustomUserCreationForm
-from book.models import Hospital, User, Patient, Doctor, Appointment
-from book.utils import paginateHospitals
-
-
+from django.views.decorators.csrf import csrf_exempt
+import datetime
+from datetime import datetime, date, timedelta
+from .signals import generate_random_string
+from .utils import paginateHospitals
 # Create your views here.
 
 @csrf_exempt
@@ -178,8 +185,8 @@ def doctor_dashboard(request):
                 if request.user.is_doctor:
                     # doctor = Doctor_Information.objects.get(user_id=pk)
                     doctor = Doctor.objects.get(user=request.user)
-
-                    current_date = datetime.date.today()
+                    #current_date = datetime.date.today()
+                    current_date=timezone.now().date()
                     current_date_str = str(current_date)
                     # today_appointments = Appointment.objects.filter(doctor_time_slots__start_date__lte=current_date,doctor_time_slots__end_date__gte=current_date, doctor=doctor)
                     today_appointments = Appointment.objects.filter(start_date__lte=current_date, end_date__gte=current_date, doctor=doctor)
@@ -254,3 +261,101 @@ def search(request):
         logout(request)
         messages.error(request, 'Non autorisé')
         return render(request, 'login.html')
+
+@csrf_exempt
+@login_required(login_url="doctor-login")
+def booking(request, pk):
+    patient = request.user.patient
+    doctor = Doctor.objects.get(doctor_id=pk)
+
+    if request.method == 'POST':
+        appointment = Appointment(patient=patient, doctor=doctor)
+        start_date = request.POST['appoint_start_date']
+        end_date = request.POST['appoint_end_date']
+        message = request.POST['message']
+
+        """transformed_date_start = datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+        transformed_date_start = datetime.fromisoformat(transformed_date_start).date()
+
+        transformed_date_end = datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+        transformed_date_end = datetime.fromisoformat(transformed_date_end).date()"""
+        transformed_date_start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        transformed_date_end = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        # Check if the selected date is prior to the current date
+        if transformed_date_start < date.today() or transformed_date_end < date.today():
+            messages.error(request, 'Veuillez sélectionner une date à partir d\'aujourd\'hui ou ultérieure.')
+            return redirect('booking', pk=pk)
+
+        # Vérifier la présence du médecin (DoctorTimeSlots)
+        is_present = DoctorTimeSlots.objects.filter(
+            doctor=doctor,
+            doc_start_date__lte=transformed_date_end,
+            doc_end_date__gte=transformed_date_start
+        ).exists()
+
+        if not is_present:
+            # Le médecin n'est pas présent pendant cette période
+            messages.error(request, 'Le médecin n\'est pas présent pendant cette période.Merci de choisire une autre date.')
+            return redirect('booking', pk=pk)
+
+        # Vérifier le quota de patients par jour (DoctorTimeSlots)
+        daily_quota = 5  # Le quota quotidien est fixé à 5 patients, vous pouvez le modifier si nécessaire
+        patient_count = Appointment.objects.filter(
+            doctor=doctor,
+            start_date__lte=transformed_date_end,
+            end_date__gte=transformed_date_start
+        ).count()
+
+        if patient_count >= daily_quota:
+            # Le quota de patients pour cette journée a été atteint
+            messages.error(request, 'Le médecin n\'est pas disponible aux dates choisies. Veuillez choisir une autre date. Le planning du médecin est rempli.')
+            return redirect('booking', pk=pk)
+
+        # Le médecin est présent et le quota n'a pas été atteint, enregistrer le rendez-vous
+        appointment.start_date = transformed_date_start
+        appointment.end_date = transformed_date_end
+
+        appointment.serial_number = generate_random_string()
+
+        appointment.message = message
+        appointment.save()
+
+        messages.success(request, 'Séjour réservé avec succès.')
+        return redirect('patient-dashboard')
+
+    next_available_date = get_next_available_date(doctor)
+    if next_available_date:
+        next_available_date_formatted = formats.date_format(next_available_date, format='j F Y')
+
+
+    context = {'patient': patient, 'doctor': doctor,'next_available_date_formatted': next_available_date_formatted}
+    return render(request, 'book/patient/booking.html', context)
+
+
+def get_next_available_date(doctor):
+    today = timezone.now().date()
+    next_available_date = None
+    delta = timedelta(days=1)
+
+    while not next_available_date:
+        is_present = DoctorTimeSlots.objects.filter(
+            doctor=doctor,
+            doc_start_date__lte=today,
+            doc_end_date__gte=today
+        ).exists()
+
+        if is_present:
+            daily_quota = 5
+            patient_count = Appointment.objects.filter(
+                doctor=doctor,
+                start_date__lte=today,
+                end_date__gte=today
+            ).count()
+
+            if patient_count < daily_quota:
+                next_available_date = today
+
+        today += delta
+
+    return next_available_date
