@@ -81,7 +81,8 @@
                     <div class="doc-info-right">
 
                       <div class="clinic-booking">
-                        <a class="apt-btn">Prendre rendez-vous</a>
+                        <a class="apt-btn"
+                          href="{% url 'booking' pk=doctor.doctor_id %}">Prendre rendez-vous</a>
                       </div>
                     </div>
                   </div>
