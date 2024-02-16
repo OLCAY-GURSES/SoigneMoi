@@ -1,0 +1,143 @@
+
+{% extends 'book/base.html' %}
+
+{% load static %}
+
+{% block title %}Accueil{% endblock title %}
+
+{% block content %}
+
+
+{% load static %}
+
+
+<body>
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-12 col-12">
+            <h2 class="breadcrumb-title">Prendre rendez-vous</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <!-- Page Content -->
+    <div class="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="booking-doc-info">
+                  <div class="booking-info">
+                    <h4>
+                      <a href="doctor-profile.html"> Dr.{{doctor.first_name}} {{doctor.last_name}}</a>
+                    </h4>
+                      <h5 class="doc-department"><b>Spécialités: </b>
+                        {{ doctor.specialization.specialization_name }}
+                      </h5>
+                      <div class="clinic-details">
+                        <p class="doc-location">
+                          <i class="fas fa-map-marker-alt"></i> <b>Hôpital: </b>
+                          {{doctor.hospital_name}}
+                        </p>
+                      </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Schedule Widget -->
+            <div class="card">
+              <div class="schedule widget-boxed mt-33 mt-0">
+                <div class="widget-boxed-header">
+                    <h4><i class="fa fa-calendar pr-3 padd-r-10"></i>Planifier un rendez-vous</h4>
+                </div>
+
+                {% if next_available_date_formatted  %}
+                <p>La prochaine date disponible est le {{ next_available_date_formatted  }}</p>
+                {% else %}
+                <p>Aucune date disponible pour le moment</p>
+                {% endif %}
+
+                <form method="post" action="{% url 'booking' pk=doctor.doctor_id %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                    <div class="agent-contact-form-sidebar">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <label>Début séjour</label>
+
+                                <input type="date" name="appoint_start_date" id="reservation-start-date" data-large-mode="true" data-lock="from" data-theme="my-style" class="form-control" min="{{ todays_date }}" max="{{ max_date }}" required>
+                            </div>
+
+                          <div class="col-lg-6 col-md-12">
+                                <label>Début séjour</label>
+                                <input type="date" name="appoint_end_date" id="reservation-end-date" data-large-mode="true" data-lock="from" data-theme="my-style" class="form-control"/>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12" style="padding-bottom: 10px;">
+                              <label>Message</label>
+                              <textarea placeholder="Message" name="message"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                          <button type="submit" class="btn btn-primary submit-btn">Valider</button>
+                        </div>
+                    </div>
+                </form>
+
+               </div>
+            </div>
+
+           </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Page Content -->
+
+
+  </div>
+  <!-- /Main Wrapper -->
+
+
+  <!-- Date Dropper Script-->
+  <script>
+  $('#reservation-start-date').dateDropper();
+  $('#reservation-end-date').dateDropper();
+  </script>
+
+  <script>
+  // Récupérer la date d'aujourd'hui
+  var today = new Date().toISOString().split('T')[0];
+
+  // Sélectionner tous les éléments de date et les parcourir
+  var dateInputs = document.querySelectorAll('input[type="date"]');
+  dateInputs.forEach(function(input) {
+    // Définir la date minimale sur aujourd'hui
+    input.min = today;
+
+    // Désactiver les dates antérieures à aujourd'hui
+    input.addEventListener('input', function() {
+      var selectedDate = this.value;
+      var inputDate = new Date(selectedDate).toISOString().split('T')[0];
+      if (inputDate < today) {
+        this.value = '';
+      }
+    });
+  });
+  </script>
+
+
+
+</body>
+
+{% endblock content %}
