@@ -81,12 +81,11 @@ class Hospital(models.Model):
     def __str__(self):
         return str(self.name)
 
+
 class Specialization(models.Model):
     specialization_id = models.AutoField(primary_key=True)
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, null=True, blank=True)
-
     specialization_name = models.CharField(max_length=200, null=True, blank=True)
-
 
     def __str__(self):
         val1 = str(self.specialization_name)
@@ -108,7 +107,9 @@ class Patient(models.Model):
     def __str__(self):
         return str(self.user.email)
 
+
 class Doctor(models.Model):
+
     doctor_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='profile')
     first_name = models.CharField(max_length=200, null=True)
@@ -116,11 +117,7 @@ class Doctor(models.Model):
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=200, null=True, blank=True)
     date_of_bird = models.DateField(null=True, blank=True)
-    #limite_patient = models.IntegerField(default=5)
-    #work_start_day = models.DateField(max_length=200, null=True, blank=True)
-    #work_end_day = models.DateField(max_length=200, null=True, blank=True)
-
-    # ForeignKey --> one to one relationship with Hospital_Information model.
+    reg_number = models.CharField(max_length=6, null=True, blank=True)
     hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
@@ -139,6 +136,7 @@ class DoctorTimeSlots(models.Model):
 
     class Meta:
         verbose_name_plural = "DoctorTimeSlots"
+
 
 class Appointment(models.Model):
 
@@ -160,8 +158,6 @@ class Appointment(models.Model):
 
     class Meta:
         verbose_name_plural = "Appointment"
-
-
 
 
 class Prescription(models.Model):
@@ -188,7 +184,8 @@ class Prescription_medicine(models.Model):
     medicine_id = models.AutoField(primary_key=True)
     medicine_name = models.CharField(max_length=200, null=True, blank=True)
     quantity = models.CharField(max_length=200, null=True, blank=True)
-    duration = models.CharField(max_length=200, null=True, blank=True)
+    start_day = models.DateField( null=True, blank=True)
+    end_day = models.DateField(null=True, blank=True)
     frequency = models.CharField(max_length=200, null=True, blank=True)
     instruction = models.TextField(null=True, blank=True)
 
@@ -201,8 +198,14 @@ class Prescription_test(models.Model):
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=200, null=True, blank=True)
     test_description = models.TextField(null=True, blank=True)
+    test_info_id = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return str(self.prescription.prescription_id)
 
 
+class Test_Information(models.Model):
+    test_id = models.AutoField(primary_key=True)
+    test_name = models.CharField(max_length=200, null=True, blank=True)
+    def __str__(self):
+        return str(self.test_name)

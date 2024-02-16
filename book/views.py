@@ -359,3 +359,19 @@ def get_next_available_date(doctor):
         today += delta
 
     return next_available_date
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def patient_profile(request, pk):
+    if request.user.is_doctor:
+
+        doctor = Doctor.objects.get(user=request.user)
+        patient = Patient.objects.get(patient_id=pk)
+        appointments = Appointment.objects.filter(doctor=doctor).filter(patient=patient)
+        prescription = Prescription.objects.filter(doctor=doctor).filter(patient=patient)
+
+    else:
+        redirect('doctor-logout')
+    context = {'doctor': doctor, 'appointments': appointments, 'patient': patient, 'prescription': prescription,}
+    return render(request, 'book/doctors/patient-profile.html', context)

@@ -23,6 +23,8 @@ urlpatterns = [
 
     path('booking/<int:pk>/', views.booking, name='booking'),
 
+    path('patient-profile/<int:pk>/', views.patient_profile, name='patient-profile'),
+
 
 
 ]
