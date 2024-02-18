@@ -272,7 +272,6 @@ def search(request):
         messages.error(request, 'Non autorisé')
         return render(request, 'login.html')
 
-
 @csrf_exempt
 @login_required(login_url="doctor-login")
 def booking(request, pk):
@@ -289,27 +288,31 @@ def booking(request, pk):
             messages.error(request, 'Veuillez sélectionner une date à partir d\'aujourd\'hui ou ultérieure.')
             return redirect('booking', pk=pk)
 
-        is_present = DoctorTimeSlots.objects.filter(
-            doctor=doctor,
-            doc_start_date__lte=end_date,
-            doc_end_date__gte=start_date
-        ).exists()
+        current_date = start_date
+        while current_date <= end_date:
+            is_present = DoctorTimeSlots.objects.filter(
+                doctor=doctor,
+                doc_start_date__lte=current_date,
+                doc_end_date__gte=current_date
+            ).exists()
 
-        if not is_present:
-            messages.error(request, 'Le médecin n\'est pas présent pendant cette période. Veuillez choisir une autre date.')
-            return redirect('booking', pk=pk)
+            if not is_present:
+                messages.error(request, 'Le médecin n\'est pas présent pendant la période sélectionnée. Veuillez choisir une autre période.')
+                return redirect('booking', pk=pk)
 
-        daily_quota = 5
-        patient_count = Appointment.objects.filter(
-            doctor=doctor,
-            start_date__lte=end_date,
-            end_date__gte=start_date
-        ).count()
+            daily_quota = 5
+            patient_count = Appointment.objects.filter(
+                doctor=doctor,
+                start_date__lte=current_date,
+                end_date__gte=current_date
+            ).count()
 
-        if patient_count >= daily_quota:
-            messages.error(request, 'Le médecin n\'est pas disponible aux dates choisies. Veuillez sélectionner une autre date. Le planning du médecin est complet pour les jours suivant :')
-            booking_url = reverse('booking', args=[pk])
-            return redirect(f'{booking_url}?dates_displayed=True')
+            if patient_count >= daily_quota:
+                messages.error(request, 'Le médecin n\'est pas disponible aux dates choisies. Veuillez sélectionner une autre date. Le planning du médecin est complet pour les jours suivants :')
+                booking_url = reverse('booking', args=[pk])
+                return redirect(f'{booking_url}?dates_displayed=True')
+
+            current_date += timedelta(days=1)
 
         appointment.start_date = start_date
         appointment.end_date = end_date
@@ -351,34 +354,6 @@ def get_unavailable_dates(doctor, today):
         today += delta
 
     return unavailable_dates
-
-
-def get_next_available_date(doctor):
-    today = timezone.now().date()
-    next_available_date = None
-    delta = timedelta(days=1)
-
-    while not next_available_date:
-        is_present = DoctorTimeSlots.objects.filter(
-            doctor=doctor,
-            doc_start_date__lte=today,
-            doc_end_date__gte=today
-        ).exists()
-
-        if is_present:
-            daily_quota = 5
-            patient_count = Appointment.objects.filter(
-                doctor=doctor,
-                start_date__lte=today,
-                end_date__gte=today
-            ).count()
-
-            if patient_count < daily_quota:
-                next_available_date = today
-
-        today += delta
-
-    return next_available_date
 
 
 @csrf_exempt
