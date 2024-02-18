@@ -1,5 +1,5 @@
 from django.urls import path
-import views
+from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -22,6 +22,8 @@ urlpatterns = [
     path('search/', views.search, name='search'),
 
     path('booking/<int:pk>/', views.booking, name='booking'),
+
+    path('patient-profile/<int:pk>/', views.patient_profile, name='patient-profile'),
 
 
 ]

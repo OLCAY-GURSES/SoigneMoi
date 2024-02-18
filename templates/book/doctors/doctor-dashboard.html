@@ -64,6 +64,16 @@
                                   </td>
                                   <td>{{today.start_date}}</td>
                                   <td>{{today.end_date}}</td>
+                                  <td>
+                                    <div class="table-action">
+                                      <a
+                                        href="{% url 'patient-profile' pk=today.patient.patient_id %}"
+                                        class="btn btn-sm bg-info-light"
+                                      >
+                                        <i class="far fa-eye"></i> Voir/Ajouter Prescription
+                                      </a>
+                                    </div>
+                                  </td>
                                 </tr>
                                 {% endfor %}
 

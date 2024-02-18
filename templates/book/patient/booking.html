@@ -62,11 +62,30 @@
                     <h4><i class="fa fa-calendar pr-3 padd-r-10"></i>Planifier un rendez-vous</h4>
                 </div>
 
+                {% if messages %}
+                  {% for message in messages %}
+                  <p>{{ message }}</p>
+                  {% endfor %}
+                {% endif %}
+
+                {% if request.GET.dates_displayed %}
+                    {% if unavailable_dates %}
+                        <ul>
+                            {% for date in unavailable_dates %}
+                                <li>{{ date }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Aucune date d'indisponibilité pour le médecin.</p>
+                    {% endif %}
+                {% endif %}
+                <!--
                 {% if next_available_date_formatted  %}
                 <p>La prochaine date disponible est le {{ next_available_date_formatted  }}</p>
                 {% else %}
                 <p>Aucune date disponible pour le moment</p>
-                {% endif %}
+                {% endif %}-->
+
 
                 <form method="post" action="{% url 'booking' pk=doctor.doctor_id %}" enctype="multipart/form-data">
                   {% csrf_token %}
@@ -106,16 +125,12 @@
 
 
   </div>
-  <!-- /Main Wrapper -->
+    <script>
+      $('#reservation-start-date').dateDropper();
+      $('#reservation-end-date').dateDropper();
+    </script>
 
-
-  <!-- Date Dropper Script-->
-  <script>
-  $('#reservation-start-date').dateDropper();
-  $('#reservation-end-date').dateDropper();
-  </script>
-
-  <script>
+    <script>
   // Récupérer la date d'aujourd'hui
   var today = new Date().toISOString().split('T')[0];
 
@@ -134,7 +149,43 @@
       }
     });
   });
+</script>
+
+  <script>
+    // Masquer les messages après 5 secondes
+setTimeout(function() {
+  var messages = document.getElementById('messages');
+  if (messages) {
+    messages.style.display = 'none';
+  }
+}, 5000;
+
+    if (medecinNonDisponible) {
+  document.getElementById('unavailable-popup').classList.add('show');
+});
   </script>
+
+        <script>
+$(document).ready(function() {
+    // Récupérer les dates où le médecin n'est pas disponible depuis le contexte Django
+    var datesNonDisponibles = {{ dates_non_disponibles|safe }};
+
+    // Initialiser le Datepicker avec l'option beforeShowDay
+    $("#datepicker").datepicker({
+        beforeShowDay: function(date) {
+            // Convertir la date en format "yyyy-mm-dd" pour la comparer avec les dates non disponibles
+            var formattedDate = $.datepicker.formatDate("yy-mm-dd", date);
+
+            // Vérifier si la date est dans les dates non disponibles
+            if (datesNonDisponibles.includes(formattedDate)) {
+                return [false];
+            } else {
+                return [true];
+            }
+        }
+    });
+});
+</script>
 
 
 
