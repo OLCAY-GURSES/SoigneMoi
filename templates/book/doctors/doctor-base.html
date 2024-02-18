@@ -27,9 +27,10 @@
     <link rel="stylesheet" href="{% static 'SGM/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}"
     />
 
+    <link rel="stylesheet" href="{% static 'SGM/Normal/dropzone/dropzone.min.css' %}"/>
 
     <!-- Fancybox CSS -->
-    <link rel="stylesheet" href="% static 'SGM/plugins/fancybox/jquery.fancybox.min.css' %"/>
+    <link rel="stylesheet" href="{% static 'SGM/plugins/fancybox/jquery.fancybox.min.css' %"/>
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'SGM/css/style.css' %}"/>
@@ -40,7 +41,7 @@
   <body>
         <!-- Header -->
 
-      <header class="header">{% include 'book/doctors/doctor-navbar.html' %}</header>
+      <header class="header">{% include '../partials/header.html' %}</header>
       <!-- /Header -->
 
         <!-- main -->
@@ -71,11 +72,25 @@
         <!-- Select2 JS -->
     <script src="{% static 'SGM/plugins/select2/js/select2.min.js' %}"></script>
 
+    <!-- Dropzone JS -->
+    <script src="{% static 'SGM/plugins/dropzone/dropzone.min.js' %}"></script>
+
     <!-- Bootstrap Tagsinput JS -->
     <script src="{% static 'SGM/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.js' %}"></script>
 
     <!-- Profile Settings JS -->
     <script src="{% static 'SGM/js/doctor-profile-settings.js' %}"></script>
+
+        <!-- Slimscroll JS -->
+	<script src="{% static 'SGM/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+
+	<!-- Prescription Settings JS -->
+	<script src="{% static 'SGM/js/prescription-settings.js' %}"></script>
+
+	<!-- Datatables JS -->
+	<script src="{% static 'SGM/plugins/datatables/jquery.dataTables.min.js'%}"></script>
+	<script src="{% static 'SGM/plugins/datatables/datatables.min.js'%}"></script>
+
 
     {% if messages %}
     <script>
