@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+import views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,14 +15,13 @@ urlpatterns = [
     path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
     path('profile-settings/', views.profile_settings, name='profile-settings'),
 
-    path('doctor-dashboard/',views.doctor_dashboard, name='doctor-dashboard'),
+    path('doctor-dashboard/', views.doctor_dashboard, name='doctor-dashboard'),
     path('doctor-profile-settings/', views.doctor_profile_settings, name='doctor-profile-settings'),
 
     path('list-hospital/', views.list_hospital, name='list-hospital'),
     path('search/', views.search, name='search'),
 
     path('booking/<int:pk>/', views.booking, name='booking'),
-
 
 
 ]

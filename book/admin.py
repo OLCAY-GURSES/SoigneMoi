@@ -1,21 +1,36 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-
 from django.utils.translation import gettext_lazy as _
-
 from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment, \
     Prescription, Prescription_medicine, Prescription_test
+import random
+import string
 
 admin.site.register(Hospital)
 admin.site.register(Specialization)
 admin.site.register(Admin)
 admin.site.register(Patient)
-admin.site.register(Doctor)
 admin.site.register(Prescription)
-
 admin.site.register(Prescription_medicine)
-
 admin.site.register(Prescription_test)
+
+class DoctorAdmin(admin.ModelAdmin):
+    list_display = ('doctor_id', 'first_name', 'last_name', 'specialization', 'phone_number', 'date_of_bird','reg_number',  'hospital_name')
+    # other model administratif
+
+    def save_model(self, request, obj, form, change):
+        if not obj.reg_number:
+            # Generate a random registration number
+            reg_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            # Check if the generated registration number is already assigned to another doctor
+            while Doctor.objects.filter(reg_number=reg_number).exists():
+                reg_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            obj.reg_number = reg_number
+        super().save_model(request, obj, form, change)
+
+
+admin.site.register(Doctor, DoctorAdmin)
+
 
 
 class DoctorTimeSlotsAdmin(admin.ModelAdmin):

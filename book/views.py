@@ -359,3 +359,4 @@ def get_next_available_date(doctor):
         today += delta
 
     return next_available_date
+
