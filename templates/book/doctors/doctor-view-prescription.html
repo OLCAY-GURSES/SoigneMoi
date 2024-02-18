@@ -137,8 +137,10 @@
 														<td class="text-center">{{medicine.frequency}}</td>
                                                         <td class="text-center">{{medicine.start_day}}</td>
                                                         <td class="text-center">{{medicine.end_day}}
+
+
 															<form method="POST" enctype="multipart/form-data">
-															{% csrf_token %}
+															     {% csrf_token %}
 																<input type="hidden" name="prescription_medicine_id" value="{{ medicine.medicine_id }}">
 																<label for="end_day">Nouvelle date de fin:</label>
 																<input type="text" name="end_day" value="{{ medicine.end_day|date:'d/m/Y' }}" required>
