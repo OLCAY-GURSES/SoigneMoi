@@ -9,7 +9,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
 from book.models import Patient, User, Hospital, Admin, Specialization, Doctor, Appointment, Prescription, \
-    DoctorTimeSlots
+    DoctorTimeSlots, Prescription_test, Prescription_medicine
 
 from django.shortcuts import redirect, render
 from .models import Doctor, Appointment
@@ -370,3 +370,94 @@ def patient_profile(request, pk):
         redirect('doctor-logout')
     context = {'doctor': doctor, 'appointments': appointments, 'patient': patient, 'prescription': prescription,}
     return render(request, 'book/doctors/patient-profile.html', context)
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def create_prescription(request, pk):
+
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(user=request.user)
+        patient = Patient.objects.get(patient_id=pk)
+        create_date = timezone.now().date()
+
+        if request.method == 'POST':
+            prescription = Prescription(doctor=doctor, patient=patient)
+
+            test_name = request.POST.getlist('test_name')
+            test_description = request.POST.getlist('description')
+            medicine_name = request.POST.getlist('medicine_name')
+            medicine_quantity = request.POST.getlist('quantity')
+
+            medecine_frequency = request.POST.getlist('frequency')
+            medicine_start_day = request.POST.getlist('start_day')
+            medicine_end_day = request.POST.getlist('end_day')
+
+            medicine_instruction = request.POST.getlist('instruction')
+            extra_information = request.POST.get('extra_information')
+
+
+            prescription.extra_information = extra_information
+            prescription.create_date = create_date
+
+
+            prescription.save()
+
+            for i in range(len(medicine_name)):
+                medicine = Prescription_medicine(prescription=prescription)
+                medicine.medicine_name = medicine_name[i]
+                medicine.quantity = medicine_quantity[i]
+                medicine.frequency = medecine_frequency[i]
+                # Convert start_day and end_day to datetime objects
+                start_day = datetime.strptime(medicine_start_day[i], '%d/%m/%Y').date()
+                end_day = datetime.strptime(medicine_end_day[i], '%d/%m/%Y').date()
+
+
+                medicine.start_day = start_day
+                medicine.end_day = end_day
+
+                medicine.instruction = medicine_instruction[i]
+
+                medicine.save()
+
+            for i in range(len(test_name)):
+                tests = Prescription_test(prescription=prescription)
+                tests.test_name = test_name[i]
+                tests.test_description = test_description[i]
+
+
+                tests.save()
+
+            messages.success(request, 'Prescription Created')
+            return redirect('patient-profile', pk=patient.patient_id)
+
+    context = {'doctor': doctor, 'patient': patient, }
+    return render(request, 'book/doctors/create-prescription.html', context)
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def doctor_view_prescription(request, pk):
+    if request.user.is_authenticated and request.user.is_doctor:
+        doctor = Doctor.objects.get(user=request.user)
+        prescription = Prescription.objects.get(prescription_id=pk)
+        medicines = Prescription_medicine.objects.filter(prescription=prescription)
+        tests = Prescription_test.objects.filter(prescription=prescription)
+
+        if request.method == 'POST':
+            medicines_end_day = request.POST.get('end_day')
+            # Convert end_day to datetime object
+            end_day = datetime.strptime(medicines_end_day, '%d/%m/%Y').date()
+
+            # Trouver l'instance de Prescription_medicine que vous souhaitez modifier
+            prescription_medicine_id = request.POST.get('prescription_medicine_id')
+            prescription_medicine = Prescription_medicine.objects.get(pk=prescription_medicine_id)
+
+            # Mettre à jour la valeur de end_day de l'instance de Prescription_medicine
+            prescription_medicine.end_day = end_day
+            prescription_medicine.save()
+
+
+
+        context = {'prescription': prescription, 'medicines': medicines, 'tests': tests, 'doctor': doctor}
+        return render(request, 'book/doctors/doctor-view-prescription.html', context)
