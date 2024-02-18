@@ -1,9 +1,7 @@
 
 {% extends 'book/base.html' %}
 
-{% load static %}
-
-{% block title %}Patient Space{% endblock title %}
+{% block title %}Patient dashboard{% endblock title %}
 
 {% block content %}
 
@@ -11,107 +9,185 @@
 {% load static %}
 
 
-<body>
-  <!-- Main Wrapper -->
-  <div class="main-wrapper">
-    <!-- Breadcrumb -->
-    <div class="breadcrumb-bar">
-      <div class="container-fluid">
-        <div class="row align-items-center">
+  <body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
 
-          <div class="col-md-12 col-12">
 
-            <h2 class="breadcrumb-title">Espace patient</h2>{% include 'book/message.html' %}
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-bar">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+
+            <div class="col-md-12 col-12">
+              <h2 class="breadcrumb-title">Patient Dashboard</h2>{% include 'book/message.html' %}
+            </div>
+
           </div>
-
         </div>
       </div>
-    </div>
-    <!-- /Breadcrumb -->
+      <!-- /Breadcrumb -->
 
-    <!-- Page Content -->
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- Profile Sidebar -->
-          <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-            <div>{% include 'book/patient/patient-sidebar.html' %}</div>
-          </div>
-          <!-- / Profile Sidebar -->
+      <!-- Page Content -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Profile Sidebar -->
+            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+              <div>{% include 'book/patient/patient-sidebar.html' %}</div>
+            </div>
+            <!-- / Profile Sidebar -->
 
-          <div class="col-md-7 col-lg-8 col-xl-9">
-            <div class="card">
-              <div class="card-body pt-0">
-                <!-- Tab Menu -->
-                <nav class="user-tabs mb-4">
-                  <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="#pat_appointments" data-toggle="tab">Rendez-vous</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#pat_prescriptions" data-toggle="tab">Prescriptions</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#pat_medical_records" data-toggle="tab">
-                        <span class="med-records">Dossiers médical</span>
-                      </a>
-                    </li>
+            <div class="col-md-7 col-lg-8 col-xl-9">
+              <div class="card">
+                <div class="card-body pt-0">
+                  <!-- Tab Menu -->
+                  <nav class="user-tabs mb-4">
+                    <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+                      <li class="nav-item">
+                        <a
+                          class="nav-link active"
+                          href="#pat_appointments"
+                          data-toggle="tab"
+                          >Mes rendez-vous</a
+                        >
+                      </li>
+                      <li class="nav-item">
+                        <a
+                          class="nav-link"
+                          href="#pat_prescriptions"
+                          data-toggle="tab"
+                          >Prescriptions</a
+                        >
+                      </li>
 
-                  </ul>
-                </nav>
-                <!-- /Tab Menu -->
 
-                <!-- Tab Content -->
-                <div class="tab-content pt-0">
-                  <!-- Appointment Tab -->
-                  <div id="pat_appointments" class="tab-pane fade show active">
-                    <div class="card card-table mb-0">
-                      <div class="card-body">
-                        <div class="table-responsive">
-                          <table class="table table-hover table-center mb-0">
-                            <thead>
-                              <tr>
-                                <th>Docteur</th>
-                                <th>Date séjours</th>
-                              </tr>
-                            </thead>
-                            <tbody>
+                    </ul>
+                  </nav>
+                  <!-- /Tab Menu -->
+
+                  <!-- Tab Content -->
+                  <div class="tab-content pt-0">
+                    <!-- Appointment Tab -->
+                    <div
+                      id="pat_appointments"
+                      class="tab-pane show active"
+                    >
+                      <div class="card card-table mb-0">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-hover table-center mb-0">
+                              <thead>
+                                <tr>
+                                  <th>Doctor</th>
+                                  <th>Date début séjour</th>
+                                  <th>Date fin séjour</th>
+                                </tr>
+                              </thead>
+
+                              <tbody>
                                 {% for appointment in appointments %}
+
+
+
                                 <tr>
                                   <td>
-                                    <h4 class="mb-0">{{ appointment.doctor.first_name }}</h4>
+
+                                      <h4 class="mb-0">{{ appointment.doctor.first_name }}</h4>
+
                                   </td>
-                                  <td>{{appointment.start_date}}</td>
-                                   <td>{{appointment.end_date}}</td>
+                                  <td>
+                                    {{appointment.start_date}}
+
+                                  </td>
+                                   <td>
+                                    {{appointment.end_date}}
+
+                                  </td>
+
+
+
+
                                 </tr>
                                 {% endfor %}
                               </tbody>
-
-                          </table>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
-                 </div>
+                    <!-- /Appointment Tab -->
+
+                    <!-- Prescription Tab -->
+                    <div class="tab-pane" id="pat_prescriptions">
+                      <div class="card card-table mb-0">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-hover table-center mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th>Numéro de Prescription</th>
+                                  <th>Nom Docteur</th>
+
+
+
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for prescription in prescription %}
+                                <tr>
+                                  <td>
+                                    <a href="javascript:void(0);">{{prescription.prescription_id}}</a>
+                                  </td>
+
+
+                                  <td>
+                                    <a >Dr. {{prescription.doctor.first_name}}</a>
+                                  </td>
+
+                                  <td>
+                                    <div class="table-action">
+                                      <a
+                                        href="{% url 'prescription-view' pk=prescription.prescription_id%}"
+                                        class="btn btn-sm bg-info-light"
+                                      >
+                                        <i class="far fa-eye"></i> Voir
+                                      </a>
+                                    </div>
+                                  </td>
+
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /Prescription Tab -->
+
+                  </div>
+                  <!-- Tab Content -->
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
 
-  {% if messages %}
-  <script>
-      {% for message in messages %}
-          $(document).ready(function () {
-              $('.toast').toast('show');
-          });
-      {% endfor %}
-  </script>
-{% endif %}
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        {% endfor %}
+    </script>
+  {% endif %}
 
-</body>
+
+
+  </body>
 
 {% endblock content %}

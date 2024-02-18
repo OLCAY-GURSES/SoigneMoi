@@ -1,7 +1,6 @@
 from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest
 from django.urls import reverse
-from django.utils import formats
 from django.utils import timezone
 from .forms import CustomUserCreationForm
 from django.views.decorators.cache import cache_control
@@ -12,7 +11,7 @@ from book.models import Patient, User, Hospital, Admin, Specialization, Doctor, 
     DoctorTimeSlots, Prescription_test, Prescription_medicine
 
 from django.shortcuts import redirect, render
-from .models import Doctor, Appointment
+
 
 from django.db.models import Count, F
 from django.contrib import messages
@@ -112,10 +111,11 @@ def patient_register(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def patient_dashboard(request):
     if request.user.is_patient:
-
         patient = Patient.objects.get(user=request.user)
         appointments = Appointment.objects.filter(patient=patient).order_by('-start_date')
-        context = {'patient': patient, 'appointments': appointments}
+        prescription = Prescription.objects.filter(patient=patient).order_by('-prescription_id')
+        context = {'patient': patient, 'appointments': appointments,
+                   'prescription': prescription}
     else:
         return redirect('logout')
 
@@ -461,3 +461,24 @@ def doctor_view_prescription(request, pk):
 
         context = {'prescription': prescription, 'medicines': medicines, 'tests': tests, 'doctor': doctor}
         return render(request, 'book/doctors/doctor-view-prescription.html', context)
+
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def prescription_view(request, pk):
+    if request.user.is_patient:
+        patient = Patient.objects.get(user=request.user)
+        prescription = Prescription.objects.filter(prescription_id=pk)
+        prescription_medicine = Prescription_medicine.objects.filter(prescription__in=prescription)
+        prescription_test = Prescription_test.objects.filter(prescription__in=prescription)
+
+        context = {
+            'patient': patient,
+            'prescription': prescription,
+            'prescription_test': prescription_test,
+            'prescription_medicine': prescription_medicine
+        }
+        return render(request, 'book/patient/prescription-view.html', context)
+    else:
+        return redirect('logout')

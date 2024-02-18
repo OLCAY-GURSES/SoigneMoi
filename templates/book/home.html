@@ -9,6 +9,8 @@
 {% block content %}
 
 
+{% load static %}
+
 <!-- Home Banner -->
 
 <div class="slideshow-container">
@@ -43,7 +45,7 @@
 <!-- /Home Banner -->
 
 <!-- Clinic and Specialities -->
-<section class="section section-specialities" style="padding-top: 80px">
+<section id="specialite" class="section section-specialities" style="padding-top: 80px">
   <div class="container-fluid">
     <div class="section-header text-center">
       <h2>Nos spécialités</h2>
@@ -132,9 +134,6 @@
 <!-- Clinic and Specialities -->
 
 
-
-
-
 <!-- Availabe Features -->
 <section class="section section-features">
   <div class="container-fluid">
@@ -148,27 +147,15 @@
       </div>
       <div class="col-md-7">
         <div class="section-header">
-          <h2 class="mt-2">Hôpital disponible</h2>
-          <p>
-           Ici, vous pouvez accéder à de nombreux hôpitaux.
-            Vous pouvez prendre rendez-vous avec votre médecin et obtenir toutes les informations sur l'hôpital à partir d'ici.
-          </p>
+          <h2 class="mt-2">Centre hospitalier SoigneMoi</h2></br>
+          <h4>
+           Besoin d'une prise en charge rapide et efficace à SoigneMoi ?</br></br>
+           Ne perdez plus de temps, prenez rendez-vous dès maintenant pour des soins de qualité dans notre hôpital de la région lilloise !
+           </br></br>
+           Nous avons révolutionné la gestion des plannings et amélioré notre accueil pour votre confort.</br></br>
+           Votre santé est notre priorité, réservez votre rendez-vous en ligne et découvrez une nouvelle expérience de soins chez SoigneMoi !"
+          </h4>
         </div>
-        <div class="features-slider slider">
-          <!-- Slider Item -->
-          {% for hospital in hospitals %}
-          <div class="feature-item text-center">
-            <img
-              src="{{ hospital.featured_image.url }}"
-              class="img-fluid"
-              alt="Feature"
-            />
-            <p>{{hospital.name}}</p>
-          </div>
-          {% endfor %}
-          <!-- /Slider Item -->
-
-
         </div>
       </div>
     </div>

@@ -1,0 +1,197 @@
+
+{% extends 'book/base.html' %}
+
+{% block title %}Patient dashboard{% endblock title %}
+
+{% block content %}
+
+
+{% load static %}
+  <body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+     	<!-- Breadcrumb -->
+      	<div class="breadcrumb-bar">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-md-12 col-12">
+
+              <h2 class="breadcrumb-title">Patient Dashboard</h2>
+            </div>
+          </div>
+        </div>
+      	</div>
+      	<!-- /Breadcrumb -->
+
+      	<!-- Page Content -->
+      	<div class="content">
+        	<div class="container-fluid">
+          		<div class="row">
+					<!-- Profile Sidebar -->
+            		<div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+              			<div>{% include 'book/patient/patient-sidebar.html' %}</div>
+            		</div>
+            		<!-- / Profile Sidebar -->
+
+					<div class="col-md-7 col-lg-6 col-xl-9">
+
+
+							<div class="invoice-content">
+								{% for prescription in prescription %}
+
+								<!-- Invoice Item -->
+								<div class="invoice-item">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="invoice-info">
+
+												<p class="invoice-details invoice-details-two">
+													<b>Dr: {{prescription.doctor.first_name}} {{prescription.doctor.last_name}}</b> <br>
+												<b>Spécialiste: {{prescription.doctor.specialization.specialization_name}}</b><br>
+												<b>Hopital: {{prescription.doctor.hospital_name}}</b><br>
+												<br><br>
+												<b>Le: {{prescription.create_date }}</b>
+
+												</p>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="invoice-info invoice-info2">
+												<strong class="customer-text">Patient:</strong>
+												<p class="invoice-details"></br>
+													<b>{{prescription.patient.first_name}} {{prescription.patient.last_name}}</b><br>
+												</p>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Invoice Item -->
+								
+								
+								
+								<!-- Invoice Item -->
+								<div class="invoice-item invoice-table-wrap mt-3">
+									<div class="row">
+										<div class="col-md-12">
+											<hr>
+											<h2 class="text-center mb-4" ><b>Prescriptions relative au traitement</b></h2>
+											<hr>
+											<div class="table-responsive">
+												<table class="invoice-table table table-bordered" >
+													<thead >
+														
+														
+														<tr style="background-color: #32DFFF">
+															<th class="text-center">Nom</th>
+															<th class="text-center">Quantité</th>
+															<th class="text-center">Fréquence</th>
+															<th class="text-center">Date début de traitement</th>
+															<th class="text-center">Date fin de traitement</th>
+															<th class="text-center">Instruction</th>
+
+															
+															
+														</tr>
+														{% for pm in prescription_medicine %}
+														<tr>
+
+															<td class="text-center">{{pm.medicine_name}}</td>
+															<td class="text-center">{{pm.quantity}}</td>
+															<td class="text-center">{{pm.frequency}}</td>
+															<td class="text-center">{{pm.start_day}}</td>
+															<td class="text-center">{{pm.end_day}}</td>
+															<td class="text-center">{{pm.instruction}}</td>
+															
+															
+														</tr>
+														{% endfor %}
+													</thead>
+												</table>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+
+								
+                                <!-- Invoice Item -->
+								<div class="invoice-item invoice-table-wrap mt-4">
+									<div class="row">
+										<div class="col-md-12">
+											<hr>
+											<h2 class="text-center mb-4" ><b>Test</b></h2>
+											<hr>
+											<div class="table-responsive">
+												<table class="invoice-table table table-bordered">
+													<thead>
+														<tr style="background-color: #32DFFF">
+															<th class="text-center">Nom</th>
+															<th class="text-center">Description</th>
+															
+														</tr>
+													</thead>
+													<tbody>
+														{% for pt in prescription_test %}
+														<tr>
+															
+															<td class="text-center">{{pt.test_name}}</td>
+															<td class="text-center">{{pt.test_description}}</td>
+
+														</tr>
+														{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+
+								<div class="invoice-item invoice-table-wrap mt-4">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="table-responsive">
+												<table class="invoice-table table table-bordered">
+													<thead>
+														<tr>
+															<th><h2 class="text-center mb-4" ><b>Avis</b></h2></th>
+															
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>{{prescription.extra_information}}</td>
+												
+															
+														</tr>
+											
+													</tbody>
+												</table>
+											</div>
+										</div>
+										
+										
+									</div>
+									<br>
+									{% endfor %}
+								</div>
+								<!-- /Invoice Information -->
+								
+							</div>
+						</div>
+						</div>
+					</div>
+					
+
+				</div>	
+			</div>		   
+		</div>
+		<!-- /Page Content -->
+	<!-- /Main Wrapper -->
+	</div>
+	  
+
+  </body>
+{% endblock content %}
