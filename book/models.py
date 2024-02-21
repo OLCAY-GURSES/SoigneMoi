@@ -105,7 +105,7 @@ class Patient(models.Model):
     serial_number = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return str(self.user.email)
+        return str(self.user)
 
 
 class Doctor(models.Model):
@@ -121,7 +121,7 @@ class Doctor(models.Model):
     hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return str(self.user.email)
+        return str(self.user)
 
 
 class DoctorTimeSlots(models.Model):

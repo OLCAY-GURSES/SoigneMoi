@@ -1,135 +1,119 @@
-<!-- home page, "Accueil". -->
-
 {% extends 'book/doctors/doctor-base.html' %}
-
 {% load static %}
-
 {% block title %}Doctor dashboard{% endblock title %}
-
 {% block content %}
-
-
 {% load static %}
-  <body>
-  {% if user.is_authenticated %}
-    <!-- Main Wrapper -->
-    <div class="main-wrapper">
-
-      <!-- Breadcrumb -->
-      <div class="breadcrumb-bar">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-md-12 col-12">
-              <h2 class="breadcrumb-title">Doctor Dashboard</h2>{% include 'book/message.html' %}
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /Breadcrumb -->
-
-      <!-- Page Content -->
-      <div class="content">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-              <!-- Profile Sidebar -->
-              <div>{% include 'book/doctors/doctor-sidebar.html' %}</div>
-              <!-- /Profile Sidebar -->
-            </div>
-
-            <div class="col-md-7 col-lg-8 col-xl-9">
-
-
-              <div class="row">
-                <div class="col-md-12">
-                  <h4 class="mb-4">Mes rendez-vous du jour</h4>
-                  <div class="appointment-tab">
-                    <!-- Today Appointment Tab -->
-                      <div class="tab-pane" id="today-appointments">
-                        <div class="card card-table mb-0">
-                          <div class="card-body">
-                            <div class="table-responsive">
-                              <table
-                                class="table table-hover table-center mb-0"
-                              >
-                                <thead>
-                                  <tr>
-
-                                      <th>Prénom et Nom du Patient</th>
-                                      <th>Date début séjour</th>
-                                      <th>Date fin séjour</th>
-                                      <th>Action</th>
-
-                                  </tr>
-                                </thead>
-                                <tbody>
-
-
-
-
-                                  {% for today in today_appointments %}
-                                  <tr>
-                                    <td>
-                                         <a href="{% url 'patient-profile' pk=today.patient.patient_id %}"></a>
-
-
-
-                                        <a >{{today.patient.first_name}}<span> {{today.patient.last_name}}</span></a>
-
-                                    </td>
-
-                                    <td>{{today.start_date}}</td>
-                                    <td>{{today.end_date}}</td>
-                                    <td>
-                                        <div class="table-action">
-                                      <a
-                                        href="{% url 'patient-profile' pk=today.patient.patient_id %}"
-                                        class="btn btn-sm bg-info-light"
-                                      >
-                                        <i class="far fa-eye"></i> Voir/Ajouter Prescription
-                                      </a>
-                                    </div>
-                                    </td>
-
-
-                                  </tr>
-                                  {% endfor %}
-
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- /Today Appointment Tab -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /Page Content -->
-
-    </div>
-    <!-- /Main Wrapper -->
+<body>
+	  {% if user.is_authenticated %}
+	<!-- Main Wrapper -->
+	<div class="main-wrapper">
+		<!-- Breadcrumb -->
+		<div class="breadcrumb-bar">
+			<div class="container-fluid">
+				<div class="row align-items-center">
+					<div class="col-md-12 col-12">
+						<h2 class="breadcrumb-title">Doctor Dashboard</h2>
+						{% include 'book/message.html' %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Breadcrumb -->
+		<!-- Page Content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+						<!-- Profile Sidebar -->
+						<div>
+							{% include 'book/doctors/doctor-sidebar.html' %}
+						</div>
+						<!-- /Profile Sidebar -->
+					</div>
+					<div class="col-md-7 col-lg-8 col-xl-9">
+						<div class="row">
+							<div class="col-md-12">
+								<h4 class="mb-4">Mes rendez-vous du jour</h4>
+								<div class="appointment-tab">
+									<!-- Today Appointment Tab -->
+									<div class="tab-pane" id="today-appointments">
+										<div class="card card-table mb-0">
+											<div class="card-body">
+												<div class="table-responsive">
+													<table class="table table-hover table-center mb-0">
+														<thead>
+															<tr>
+																<th>
+																	Action
+																</th>
+																<th>
+																	Prénom et Nom du Patient
+																</th>
+																<th>
+																	Date début séjour
+																</th>
+																<th>
+																	Date fin séjour
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															{% for today in today_appointments %}
+															<tr>
+																<td>
+																	<div class="table-action">
+																		<a href="{% url 'patient-profile' pk=today.patient.patient_id %}"class="btn btn-sm bg-info-light">
+																			<i class="far fa-eye"></i>
+																			 Voir/Ajouter Prescription
+																		</a>
+																	</div>
+																</td>
+																<td>
+																	<a href="{% url 'patient-profile' pk=today.patient.patient_id %}"></a>
+																	<a >{{today.patient.first_name}}<span> {{today.patient.last_name}}</span></a>
+																</td>
+																<td>
+																	{{today.start_date}}
+																</td>
+																<td>
+																	{{today.end_date}}
+																</td>
+															</tr>
+															{% endfor %}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /Today Appointment Tab -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+</div>
+<!-- /Main Wrapper -->
   {% else %}
-  <p> Vous n'êtes pas connecté </p>
+<p>
+	 Vous n'êtes pas connecté
+</p>
+  {% endif %}{% if messages %}
+<script>
+	{
+		% for message in messages %
+	}
+	$(document).ready(function () {
+		$('.toast').toast('show');
+	});
+	{
+		% endfor %
+	}
+</script>
   {% endif %}
-
-
-    {% if messages %}
-    <script>
-        {% for message in messages %}
-            $(document).ready(function () {
-                $('.toast').toast('show');
-            });
-        {% endfor %}
-    </script>
-  {% endif %}
-
-
-  </body>
-
+</body>
  {% endblock content %}

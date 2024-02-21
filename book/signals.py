@@ -40,15 +40,3 @@ def updateUser(sender, instance, created, **kwargs):
         user.first_name = patient.first_name
         user.email = user.email
         user.save()
-
-@receiver(post_save, sender=Doctor)
-def updateUser(sender, instance, created, **kwargs):
-    # user.profile or below (1-1 relationship goes both ways)
-    doctor = instance
-    user = doctor.user
-
-    if created == False:
-        user.last_name = doctor.last_name
-        user.first_name = doctor.first_name
-        user.email = user.email
-        user.save()

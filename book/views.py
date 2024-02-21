@@ -1,5 +1,5 @@
 from django.db.models import Count, Q
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from .forms import CustomUserCreationForm
@@ -131,27 +131,26 @@ def profile_settings(request):
         if request.method == 'GET':
             context = {'patient': patient}
             return render(request, 'book/patient/profile-settings.html', context)
-        elif request.method == 'POST':
 
+        elif request.method == 'POST':
 
             first_name = request.POST.get('first_name')
             last_name = request.POST.get('last_name')
             date_of_bird = request.POST.get('date_of_bird')
-
             phone_number = request.POST.get('phone_number')
             address = request.POST.get('address')
 
             if not date_of_bird:
                 return HttpResponseBadRequest("L'âge est manquant.")
 
-            try:
-                date_of_birdS = datetime.strptime(date_of_bird, '%d/%m/%Y').date()
-            except ValueError:
-                return HttpResponseBadRequest("Format de date invalide pour l'âge.")
+
+                # Convertir la date de naissance en objet date en utilisant le format spécifié
+                date_of_bird = datetime.strptime(date_of_bird, '%d/%m/%Y').date()
+
 
             patient.first_name = first_name
             patient.last_name = last_name
-            patient.date_of_bird = date_of_birdS
+            patient.date_of_bird = date_of_bird
             patient.phone_number = phone_number
             patient.address = address
 
@@ -160,8 +159,9 @@ def profile_settings(request):
             messages.success(request, 'Sauvegarde confirmé')
 
             return redirect('patient-dashboard')
+
     else:
-        redirect('logout')
+        return redirect('logout')
 
 @csrf_exempt
 @login_required(login_url="login")
@@ -215,7 +215,7 @@ def doctor_dashboard(request):
 
 
 @csrf_exempt
-@login_required(login_url="doctor-login")
+@login_required(login_url="login")
 def doctor_profile_settings(request):
     # profile_Settings.js
     if request.user.is_doctor:
@@ -225,23 +225,6 @@ def doctor_profile_settings(request):
             context = {'doctor': doctor}
             return render(request, 'book/doctors/doctor-profile-settings.html', context)
 
-        elif request.method == 'POST':
-
-            doc_first_name = request.POST.get('first_name')
-            doc_last_name = request.POST.get('last_name')
-            number = request.POST.get('number')
-            date_of_bird = request.POST.get('date_of_bird')
-
-            doctor.first_name = doc_first_name
-            doctor.last_name = doc_last_name
-            doctor.phone_number = number
-            doctor.date_of_bird = date_of_bird
-
-            doctor.save()
-
-            # context = {'degree': degree}
-            messages.success(request, 'Profile Mise à jour')
-            return redirect('doctor-dashboard')
     else:
         redirect('logout')
 
@@ -277,6 +260,11 @@ def search(request):
 def booking(request, pk):
     patient = request.user.patient
     doctor = Doctor.objects.get(doctor_id=pk)
+    # Check if profile settings are filled
+    if not (
+            patient.first_name and patient.last_name and patient.date_of_bird and patient.phone_number and patient.address):
+        messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
+        return redirect('profile-settings')
 
     if request.method == 'POST':
         appointment = Appointment(patient=patient, doctor=doctor)
@@ -408,14 +396,13 @@ def create_prescription(request, pk):
                 medicine.medicine_name = medicine_name[i]
                 medicine.quantity = medicine_quantity[i]
                 medicine.frequency = medecine_frequency[i]
+
                 # Convert start_day and end_day to datetime objects
                 start_day = datetime.strptime(medicine_start_day[i], '%d/%m/%Y').date()
                 end_day = datetime.strptime(medicine_end_day[i], '%d/%m/%Y').date()
 
-
                 medicine.start_day = start_day
                 medicine.end_day = end_day
-
                 medicine.instruction = medicine_instruction[i]
 
                 medicine.save()

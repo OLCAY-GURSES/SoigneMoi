@@ -8,8 +8,40 @@
 {% block content %}
 
 
-{% load static %}
+<head>
+  <style>
+    /* Style pour la fenêtre modale */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+    }
+  </style>
+
 <body>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+      <p id="modal-message"></p>
+      <button id="modal-close" style="background-color:#32DFFF;color:white">OK</button>
+    </div>
+</div>
 
 <!-- Main Wrapper -->
 <div class="main-wrapper">
@@ -60,11 +92,14 @@
 
                             </div>
 
+
+
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
 
                                     <label>Date de naissance</label>
-                                    <input type="text" class="form-control datetimepicker" value="{{patient.date_of_bird}}" name="date_of_bird">
+                                    <input type="date" class="form-control datetimepicker" value="{{patient.date_of_bird|date:'Y-m-d'}}" name="date_of_bird" placeholder="ex: 01/01/2000">
+
                                 </div>
                             </div>
 
@@ -112,6 +147,34 @@
 
 
 </div>
+
+
+<script>
+    // Afficher la fenêtre modale avec le message donné
+    function showModal(message) {
+      var modal = document.getElementById("myModal");
+      var messageElement = document.getElementById("modal-message");
+      messageElement.innerText = message;
+      modal.style.display = "block";
+    }
+
+    // Fermer la fenêtre modale en cliquant sur le bouton "OK"
+    function closeModal() {
+      var modal = document.getElementById("myModal");
+      modal.style.display = "none";
+    }
+
+    // Exemple d'utilisation : afficher un message dans la fenêtre modale
+    var message = "Veuillez compléter votre profil avant de résérver votre séjour.";
+    showModal(message);
+
+    // Ajouter un gestionnaire d'événements au bouton "OK"
+    var closeButton = document.getElementById("modal-close");
+    closeButton.addEventListener("click", closeModal);
+
+
+  </script>
+
 
 </body>
 
