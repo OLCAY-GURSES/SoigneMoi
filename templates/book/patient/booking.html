@@ -11,8 +11,20 @@
 {% load static %}
 
 
+
 <body>
-  <!-- Main Wrapper -->
+
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+<!-- Main Wrapper -->
+
+
   <div class="main-wrapper">
 
 
@@ -67,6 +79,8 @@
                   <p>{{ message }}</p>
                   {% endfor %}
                 {% endif %}
+
+
 
                 {% if request.GET.dates_displayed %}
                     {% if unavailable_dates %}
@@ -150,22 +164,17 @@
     });
   });
 </script>
+<script>
+  // Masquer les messages après 5 secondes
+  setTimeout(function() {
+    var messages = document.getElementsByClassName('messages');
+    if (messages.length > 0) {
+      messages[0].style.display = 'none';
+    }
+  }, 5000);
+</script>
 
-  <script>
-    // Masquer les messages après 5 secondes
-setTimeout(function() {
-  var messages = document.getElementById('messages');
-  if (messages) {
-    messages.style.display = 'none';
-  }
-}, 5000;
-
-    if (medecinNonDisponible) {
-  document.getElementById('unavailable-popup').classList.add('show');
-});
-  </script>
-
-        <script>
+<script>
 $(document).ready(function() {
     // Récupérer les dates où le médecin n'est pas disponible depuis le contexte Django
     var datesNonDisponibles = {{ dates_non_disponibles|safe }};
