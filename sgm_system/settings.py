@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'book',
-    'django_cleanup.apps.CleanupConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -132,3 +132,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'book.User'
+
+
+# SESSION AGE 30 Minutes
+SESSION_COOKIE_AGE = 30*60
+SESSION_SAVE_EVERY_REQUEST = True
