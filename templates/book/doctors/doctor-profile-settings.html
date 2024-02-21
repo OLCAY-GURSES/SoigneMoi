@@ -1,0 +1,108 @@
+{% extends 'book/doctors/doctor-base.html' %}
+
+{% load static %}
+
+{% block title %}Doctor profile setting{% endblock title %}
+
+{% block content %}
+
+  <body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-bar">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-md-12 col-12">
+              <h2 class="breadcrumb-title">Mettre à jour profil</h2>{% include 'book/message.html' %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Breadcrumb -->
+
+      <!-- Page Content -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+              <!-- Profile Sidebar -->
+              <div>{% include 'book/doctors/doctor-sidebar.html' %}</div>
+              <!-- /Profile Sidebar -->
+            </div>
+
+
+	          <div class="col-md-7 col-lg-8 col-xl-9">
+
+            <form action="{% url 'doctor-profile-settings' %}" method="POST" enctype="multipart/form-data">
+				<!-- Information -->
+                {% csrf_token %}
+				<div class="card">
+					<div class="card-body">
+						<h4 class="card-title">Mes Informations</h4>
+						<div class="row form-row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Prénom <span class="text-danger">*</span></label>
+									<input type="text" name="name" class="form-control" readonly value="{{doctor.first_name}}">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nom <span class="text-danger">*</span></label>
+									<input type="text" name="name" class="form-control" readonly value="{{doctor.last_name}}">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Numéro de téléphone<span class="text-danger">*</span></label>
+									<input type="number" name="number" class="form-control" readonly value="{{doctor.phone_number}}"placeholder="Phone Number">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Date de naissance</label>
+
+									<input type="text" name="name" class="form-control"  readonly value="{{doctor.date_of_bird}}">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Spécialiter - Hopital </label>
+									<input type="text" name="name" class="form-control" readonly value="{{doctor.specialization.specialization_name}}">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Email <span class="text-danger">*</span></label>
+									<input type="email" class="form-control"  readonly value="{{user.email}}">
+								</div>
+							</div>
+							</div>
+						</div>
+					</div>
+
+
+            </form>
+		  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+	{% if messages %}
+    <script>
+        {% for message in messages %}
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        {% endfor %}
+    </script>
+  {% endif %}
+
+  </body>
+
+ {% endblock content %}
