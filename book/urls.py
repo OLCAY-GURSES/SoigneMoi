@@ -28,6 +28,11 @@ urlpatterns = [
     path('doctor-view-prescription/<int:pk>/', views.doctor_view_prescription, name='doctor-view-prescription'),
     path('prescription-view/<int:pk>', views.prescription_view, name='prescription-view'),
 
+    # URL pour afficher la liste des secrétaires
+    path('secretaries/', views.nurse_dashboard, name='secretary_list'),
+
+
+
 
 ]
 
