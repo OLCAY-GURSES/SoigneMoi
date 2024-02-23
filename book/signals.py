@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Patient, User, Admin, Doctor
+from .models import Patient, User, Admin, Doctor, Secretary
 
 import random
 import string
@@ -25,6 +25,10 @@ def createPatient(sender, instance, created, **kwargs):
         elif instance.is_doctor:
             user = instance
             Doctor.objects.create(
+                user=user)
+        elif instance.is_secretary:
+            user = instance
+            Secretary.objects.create(
                 user=user)
 
 
