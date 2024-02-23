@@ -27,6 +27,10 @@ DEBUG = False
 
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+<<<<<<< HEAD
+=======
+
+>>>>>>> ce5d90bf46bab5e163b8f11c4a9ba931799e298d
 
 # Application definition
 
@@ -102,7 +106,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+REST_FRAMEWORK = {
+  'DEFAULT_PERMISSION_CLASSES': [
+      'rest_framework.permissions.IsAuthenticated'
+  ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -127,6 +135,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
 
 
 # Default primary key field type
