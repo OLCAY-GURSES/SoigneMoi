@@ -1,4 +1,3 @@
-import requests
 from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
