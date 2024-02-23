@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from datetime import date
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -52,6 +53,7 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
     is_doctor = models.BooleanField(default=False)
+    is_secretary = models.BooleanField(default=False)
     login_status = models.BooleanField(default=False)
 
     def __str__(self):
@@ -209,3 +211,20 @@ class Test_Information(models.Model):
     test_name = models.CharField(max_length=200, null=True, blank=True)
     def __str__(self):
         return str(self.test_name)
+
+class Secretary(models.Model):
+
+    secretary_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='secretary')
+    first_name = models.CharField(max_length=200, null=True)
+    last_name = models.CharField(max_length=200, null=True)
+    phone_number = models.CharField(max_length=200, null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    date_of_bird = models.DateField(null=True, blank=True)
+    reg_number = models.CharField(max_length=6, null=True, blank=True)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
+    hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True)
+
+
+    def __str__(self):
+        return str(self.user.email)

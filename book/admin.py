@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
 from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment, \
-    Prescription, Prescription_medicine, Prescription_test
+    Prescription, Prescription_medicine, Prescription_test,Secretary
 import random
 import string
 
@@ -13,6 +13,24 @@ admin.site.register(Patient)
 admin.site.register(Prescription)
 admin.site.register(Prescription_medicine)
 admin.site.register(Prescription_test)
+
+class SecretaryAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name','phone_number', 'date_of_bird','reg_number',  'hospital_name')
+    # other model administratif
+
+    def save_model(self, request, obj, form, change):
+        if not obj.reg_number:
+            # Generate a random registration number
+            reg_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            # Check if the generated registration number is already assigned to another doctor
+            while Secretary.objects.filter(reg_number=reg_number).exists():
+                reg_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            obj.reg_number = reg_number
+        super().save_model(request, obj, form, change)
+
+
+admin.site.register(Secretary, SecretaryAdmin)
+
 
 class DoctorAdmin(admin.ModelAdmin):
     list_display = ('doctor_id', 'first_name', 'last_name', 'specialization', 'phone_number', 'date_of_bird','reg_number',  'hospital_name')
@@ -76,7 +94,7 @@ class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
 
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'is_admin','is_patient','is_doctor')}),
+        (None, {'fields': ('email', 'password', 'is_admin','is_patient','is_doctor','is_secretary')}),
 
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
@@ -88,6 +106,6 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('email', 'is_staff', 'is_admin','is_patient','is_doctor')
+    list_display = ('email', 'is_staff', 'is_admin','is_patient','is_doctor','is_secretary')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

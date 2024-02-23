@@ -1,3 +1,4 @@
+import requests
 from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
@@ -8,10 +9,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
 from book.models import Patient, User, Hospital, Admin, Specialization, Doctor, Appointment, Prescription, \
-    DoctorTimeSlots, Prescription_test, Prescription_medicine
+    DoctorTimeSlots, Prescription_test, Prescription_medicine, Secretary
 
 from django.shortcuts import redirect, render
-
+import datetime
 
 from django.db.models import Count, F
 from django.contrib import messages
@@ -71,6 +72,9 @@ def login_user(request):
             if request.user.is_doctor:
                 messages.success(request, 'Bonjour Docteur')
                 return redirect('doctor-dashboard')
+            if request.user.is_secretary:
+                messages.success(request, 'Bonjour secretaire')
+                return redirect('secretary_list')
 
             else:
                 messages.error(request, "Informations d'identification non valides.")
@@ -347,16 +351,29 @@ def get_unavailable_dates(doctor, today):
 @csrf_exempt
 @login_required(login_url="login")
 def patient_profile(request, pk):
-    if request.user.is_doctor:
+    doctor = None  # Définir la variable doctor à l'extérieur de la condition
+    secretary = None  # Définir la variable secretary à l'extérieur de la condition
+    prescription = None  # Définir la variable prescription à l'extérieur de la condition
 
+    if request.user.is_doctor:
         doctor = Doctor.objects.get(user=request.user)
         patient = Patient.objects.get(patient_id=pk)
-        appointments = Appointment.objects.filter(doctor=doctor).filter(patient=patient)
-        prescription = Prescription.objects.filter(doctor=doctor).filter(patient=patient)
-
+        appointments = Appointment.objects.filter(doctor=doctor, patient=patient)
+        prescription = Prescription.objects.filter(doctor=doctor, patient=patient)
+    elif request.user.is_secretary:
+        secretary = Secretary.objects.get(user=request.user)
+        patient = Patient.objects.get(patient_id=pk)
+        appointments = Appointment.objects.filter(secretary=secretary, patient=patient)
     else:
-        redirect('doctor-logout')
-    context = {'doctor': doctor, 'appointments': appointments, 'patient': patient, 'prescription': prescription,}
+        return redirect('logout')
+
+    context = {
+        'doctor': doctor,
+        'appointments': appointments,
+        'patient': patient,
+        'prescription': prescription,
+        'secretary': secretary
+    }
     return render(request, 'book/doctors/patient-profile.html', context)
 
 
@@ -469,3 +486,25 @@ def prescription_view(request, pk):
         return render(request, 'book/patient/prescription-view.html', context)
     else:
         return redirect('logout')
+
+@csrf_exempt
+@login_required(login_url="login")
+@cache_control(no_cache=True, must_revalidate=True)
+def nurse_dashboard(request):
+    current_date = date.today()
+
+    start_appointments = Appointment.objects.filter(start_date=current_date)
+    end_appointments = Appointment.objects.filter(end_date=current_date)
+
+
+
+    start_patients = [appointment.patient for appointment in start_appointments]
+    end_patients = [appointment.patient for appointment in end_appointments]
+
+
+
+    context = {
+        'start_patients': start_patients, 'end_patients':end_patients
+    }
+
+    return render(request, 'book/secretary/secretary_list.html', context)
