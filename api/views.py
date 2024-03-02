@@ -35,7 +35,15 @@ class IsSecretary(IsAuthenticated):
 class LoginView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsDoctor]
+    permission_classes = [IsDoctor, IsSecretary]
+
+    from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class LoginView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]  # Assurez-vous d'utiliser la permission appropriée
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -44,18 +52,15 @@ class LoginView(viewsets.ModelViewSet):
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
 
-        try:
-            user = User.objects.get(email=email)
-            if user.check_password(password):
-                # Authentification réussie
-                # Effectuer d'autres opérations nécessaires
-                return Response({'success': True})
-            else:
-                # Mot de passe incorrect
-                return Response({'success': False, 'message': 'Invalid password'})
-        except User.DoesNotExist:
-            # Utilisateur non trouvé
-            return Response({'success': False, 'message': 'User not found'})
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            # Authentification réussie
+            # Effectuez d'autres opérations nécessaires
+            return Response({'success': True})
+        else:
+            # Authentification échouée
+            return Response({'success': False, 'message': 'Invalid credentials'})
+
 
 class DoctorDashboardView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

@@ -27,10 +27,6 @@ DEBUG = False
 
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
-<<<<<<< HEAD
-=======
-
->>>>>>> ce5d90bf46bab5e163b8f11c4a9ba931799e298d
 
 # Application definition
 

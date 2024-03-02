@@ -32,6 +32,7 @@ class SecretarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Secretary
         fields = '__all__'
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
@@ -48,6 +49,6 @@ class UserLoginSerializer(serializers.Serializer):
                     user.save()
                 return user
             else:
-                raise serializers.ValidationError('Unable to login with provided credentials.')
+                raise serializers.ValidationError('Unable to login with the provided credentials.')
         else:
             raise serializers.ValidationError('Must include "email" and "password".')
