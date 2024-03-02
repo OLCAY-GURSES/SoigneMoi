@@ -71,9 +71,9 @@ def login_user(request):
             if request.user.is_doctor:
                 messages.success(request, 'Bonjour Docteur')
                 return redirect('doctor-dashboard')
-            if request.user.is_secretary:
-                messages.success(request, 'Bonjour secretaire')
-                return redirect('secretary_list')
+            #if request.user.is_secretary:
+             #   messages.success(request, 'Bonjour secretaire')
+              #  return redirect('secretary_list')
 
             else:
                 messages.error(request, "Informations d'identification non valides.")
@@ -139,21 +139,21 @@ def profile_settings(request):
 
             first_name = request.POST.get('first_name')
             last_name = request.POST.get('last_name')
-            date_of_bird = request.POST.get('date_of_bird')
+            date_of_birth = request.POST.get('date_of_birth')
             phone_number = request.POST.get('phone_number')
             address = request.POST.get('address')
 
-            if not date_of_bird:
+            if not date_of_birth:
                 return HttpResponseBadRequest("L'âge est manquant.")
 
 
                 # Convertir la date de naissance en objet date en utilisant le format spécifié
-                date_of_bird = datetime.strptime(date_of_bird, '%d/%m/%Y').date()
+                date_of_birth = datetime.strptime(date_of_birth, '%d/%m/%Y').date()
 
 
             patient.first_name = first_name
             patient.last_name = last_name
-            patient.date_of_bird = date_of_bird
+            patient.date_of_birth = date_of_birth
             patient.phone_number = phone_number
             patient.address = address
 
@@ -265,7 +265,7 @@ def booking(request, pk):
     doctor = Doctor.objects.get(doctor_id=pk)
     # Check if profile settings are filled
     if not (
-            patient.first_name and patient.last_name and patient.date_of_bird and patient.phone_number and patient.address):
+            patient.first_name and patient.last_name and patient.date_of_birth and patient.phone_number and patient.address):
         messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
         return redirect('profile-settings')
 
@@ -347,12 +347,41 @@ def get_unavailable_dates(doctor, today):
     return unavailable_dates
 
 
-@csrf_exempt
+"""@csrf_exempt
 @login_required(login_url="login")
 def patient_profile(request, pk):
     doctor = None  # Définir la variable doctor à l'extérieur de la condition
     secretary = None  # Définir la variable secretary à l'extérieur de la condition
     prescription = None  # Définir la variable prescription à l'extérieur de la condition
+
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(user=request.user)
+        patient = Patient.objects.get(patient_id=pk)
+        appointments = Appointment.objects.filter(doctor=doctor, patient=patient)
+        prescription = Prescription.objects.filter(doctor=doctor, patient=patient)
+    elif request.user.is_secretary:
+        secretary = Secretary.objects.get(user=request.user)
+        patient = Patient.objects.get(patient_id=pk)
+        appointments = Appointment.objects.filter(secretary=secretary, patient=patient)
+    else:
+        return redirect('logout')
+
+    context = {
+        'doctor': doctor,
+        'appointments': appointments,
+        'patient': patient,
+        'prescription': prescription,
+        'secretary': secretary
+    }
+    return render(request, 'book/doctors/patient-profile.html', context)"""
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def patient_profile(request, pk):
+    doctor = None
+    secretary = None
+    prescription = None
 
     if request.user.is_doctor:
         doctor = Doctor.objects.get(user=request.user)
@@ -486,24 +515,25 @@ def prescription_view(request, pk):
     else:
         return redirect('logout')
 
-@csrf_exempt
+""""@csrf_exempt
 @login_required(login_url="login")
 @cache_control(no_cache=True, must_revalidate=True)
-def nurse_dashboard(request):
-    current_date = date.today()
+def secretary_dashboard(request):
+    if request.user.is_secretary:
+        current_date = date.today()
 
-    start_appointments = Appointment.objects.filter(start_date=current_date)
-    end_appointments = Appointment.objects.filter(end_date=current_date)
+        start_appointments = Appointment.objects.filter(start_date=current_date)
+        end_appointments = Appointment.objects.filter(end_date=current_date)
 
+        start_patients = [appointment.patient for appointment in start_appointments]
+        end_patients = [appointment.patient for appointment in end_appointments]
 
+        context = {
+            'start_patients': start_patients,
+            'end_patients': end_patients
+        }
 
-    start_patients = [appointment.patient for appointment in start_appointments]
-    end_patients = [appointment.patient for appointment in end_appointments]
+        return render(request, 'book/secretary/secretary_list.html', context)
 
-
-
-    context = {
-        'start_patients': start_patients, 'end_patients':end_patients
-    }
-
-    return render(request, 'book/secretary/secretary_list.html', context)
+    else:
+        return redirect('logout')"""

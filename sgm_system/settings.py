@@ -23,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-gf+0#i-26mx8yu3s)$fn44@jkj8hww8n1py6^leuv4zv@bysy('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+#ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'book',
 
 
@@ -103,12 +105,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-REST_FRAMEWORK = {
-  'DEFAULT_PERMISSION_CLASSES': [
-      'rest_framework.permissions.IsAuthenticated'
-  ]
-}
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

@@ -1,53 +1,54 @@
 from rest_framework import serializers
-from book.models import User, Admin, Hospital, Specialization, Patient, Doctor, DoctorTimeSlots, Appointment, \
-    Prescription, Prescription_medicine, Prescription_test, Test_Information, Secretary
 from django.contrib.auth import authenticate
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from book.models import User,Patient,Appointment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = []
+        fields = '__all__'
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
 
-class DoctorSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        user = authenticate(username=username, password=password)
+        if not user:
+            raise serializers.ValidationError('Invalid credentials')
+
+        refresh = RefreshToken.for_user(user)
+
+        attrs['user'] = user
+        attrs['refresh'] = str(refresh)
+        attrs['access'] = str(refresh.access_token)
+
+        return attrs
+
+class PatientSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
-        model = Doctor
+        model = Patient
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    doctor = serializers.StringRelatedField()
+    patient = serializers.StringRelatedField()
+    choise_speciality = serializers.StringRelatedField()
+
     class Meta:
         model = Appointment
         fields = '__all__'
-
-
-class PrescriptionSerializer(serializers.ModelSerializer):
-    prescription_id = serializers.IntegerField()  # Ajoutez ce champ explicite
-
-    class Meta:
-        model = Prescription
-        fields = '__all__'
-
-class SecretarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Secretary
-        fields = '__all__'
-class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField()
-
-    def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
-
-        if email and password:
-            user = authenticate(email=email, password=password)
-            if user:
-                if not user.login_status:
-                    user.login_status = True
-                    user.save()
-                return user
-            else:
-                raise serializers.ValidationError('Unable to login with provided credentials.')
-        else:
-            raise serializers.ValidationError('Must include "email" and "password".')
