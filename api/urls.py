@@ -1,19 +1,19 @@
-from django.urls import path, include
-from rest_framework import routers
-from api.views import LogoutView, LoginView, DoctorDashboardView, DoctorProfileView, CreatePrescriptionView, \
-    ViewPrescriptionView, SecretaryViewSet
+from django.urls import path
 
-router = routers.DefaultRouter()
-router.register(r'logout', LogoutView, basename='logout')
-router.register(r'login', LoginView, basename='login')
-router.register(r'doctor_dashboard', DoctorDashboardView, basename='doctor_dashboard')
-router.register(r'doctor_profile', DoctorProfileView, basename='doctor_profile')
-router.register(r'create_prescription', CreatePrescriptionView, basename='create_prescription')
-router.register(r'view_prescription', ViewPrescriptionView, basename='view_prescription')
-router.register(r'secretary_dashboard', SecretaryViewSet, basename='secretary_dashboard')
-#router.register(r'other', OtherViewSet)
+from . import views
+from .views import UserTokenObtainPairView, UserTokenRefreshView, UserCreateView, UserLoginView, UserViewSet, SecretaryDashboardAPIView
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
-    # Autres URL de votre projet...
-    path('', include(router.urls)),
+    path('token/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', UserTokenRefreshView.as_view(), name='token_refresh'),
+    path('user/create/', UserCreateView.as_view(), name='user_create'),
+    path('user/login/', UserLoginView.as_view(), name='user_login'),
+    #path('user/logout/', views.logout_view, name='logout'),
+    path('secretary/dashboard/', SecretaryDashboardAPIView.as_view(), name='secretary_dashboard'),
 ]
+
+urlpatterns += router.urls

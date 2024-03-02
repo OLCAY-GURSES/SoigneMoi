@@ -126,7 +126,7 @@ class PatientModelTest(TestCase):
             last_name='Doe',
             phone_number='1234567890',
             address='Address',
-            date_of_bird='2000-01-01',
+            date_of_birth='2000-01-01',
             serial_number='ABC123'
         )
     def test_create_patient(self):
@@ -170,7 +170,7 @@ class AppointmentModelTest(TestCase):
             last_name='Doe',
             phone_number='1234567890',
             address='Address',
-            date_of_bird='2000-01-01',
+            date_of_birth='2000-01-01',
             serial_number='ABC123'
         )
         doctor_time_slots = DoctorTimeSlots.objects.create(

@@ -29,7 +29,7 @@ urlpatterns = [
     path('prescription-view/<int:pk>', views.prescription_view, name='prescription-view'),
 
     # URL pour afficher la liste des secrétaires
-    path('secretaries/', views.nurse_dashboard, name='secretary_list'),
+    #path('secretaries/', views.secretary_dashboard, name='secretary_list'),
 
 
 

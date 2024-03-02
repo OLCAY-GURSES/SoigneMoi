@@ -23,7 +23,7 @@ class CustomUserCreationForm(UserCreationForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['last_name','first_name', 'phone_number', 'date_of_bird','address']
+        fields = ['last_name','first_name', 'phone_number', 'date_of_birth','address']
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)

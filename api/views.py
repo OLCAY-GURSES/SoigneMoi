@@ -1,147 +1,141 @@
+
+from .serializers import PatientSerializer, UserLoginSerializer, UserSerializer
+
+from django.contrib.auth import logout
+from django.http import JsonResponse
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+import json
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
+from book.models import User, Appointment, Doctor, Prescription, Secretary
+from rest_framework.permissions import BasePermission, AllowAny
+from rest_framework import status, viewsets
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from rest_framework import serializers
 from datetime import date
-from urllib import request
-
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets, permissions
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import UserLoginSerializer, AppointmentSerializer, DoctorSerializer, PrescriptionSerializer, \
-    UserSerializer, SecretarySerializer
-from book.models import Doctor, Appointment, Patient, Prescription, Prescription_medicine, Prescription_test, User
-from django.contrib.auth import login
-from django.utils import timezone
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from book.models import Patient, Appointment
+from datetime import date
+
+#from sgm_api.serializers import PatientSerializer, AppointmentSerializer
 
 
 
-class LogoutView(viewsets.ModelViewSet):
-    def create(self, request):
-        # Invalidating the user's session
-        request.session.flush()
-        return Response(status=status.HTTP_200_OK)
+
+class UserTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    serializer_class = UserLoginSerializer
 
 
-class IsDoctor(IsAuthenticated):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_doctor
-
-
-class IsSecretary(IsAuthenticated):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_secretary
-
-class LoginView(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsDoctor, IsSecretary]
+    permission_classes = [IsAuthenticated]
 
-    from rest_framework.views import APIView
-from rest_framework.response import Response
 
-class LoginView(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]  # Assurez-vous d'utiliser la permission appropriée
+class UserTokenRefreshView(TokenRefreshView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = UserLoginSerializer
 
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
+class UserCreateView(APIView):
+    permission_classes = [AllowAny]
 
-        user = authenticate(request, email=email, password=password)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+
         if user is not None:
-            # Authentification réussie
-            # Effectuez d'autres opérations nécessaires
-            return Response({'success': True})
+            refresh = RefreshToken.for_user(user)
+
+            if user.is_patient:
+                role = 'is_patient'
+            elif user.is_doctor:
+                role = 'is_doctor'
+            elif user.is_secretary:
+                role = 'is_secretary'
+            else:
+                role = 'unknown'
+
+            response_data = {
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'role': role
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
-            # Authentification échouée
-            return Response({'success': False, 'message': 'Invalid credentials'})
+
+            return Response({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class DoctorDashboardView(viewsets.ModelViewSet):
+def logout_view(request):
+    logout(request)
+    return JsonResponse({'message': 'Vous avez été déconnecté avec succès.'})
+
+"""class SecretaryDashboardAPIView(APIView):
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = AppointmentSerializer
-    permission_classes = [IsDoctor]
 
-    def list(self, request, *args, **kwargs):
-        doctor = Doctor.objects.get(user=request.user)
-        today = timezone.now().date()
-        appointments = Appointment.objects.filter(
-            start_date__lte=today,
-            end_date__gte=today,
-            doctor=doctor
-        )
+    def get(self, request):
+        if request.user.is_secretary:
+            current_date = date.today()
 
-        serializer = AppointmentSerializer(appointments, many=True)
+            start_appointments = Appointment.objects.filter(start_date=current_date)
+            end_appointments = Appointment.objects.filter(end_date=current_date)
 
-        return Response({
-            'doctor': DoctorSerializer(doctor).data,
-            'today': today,
-            'appointments': serializer.data
-        })
-class DoctorProfileView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = DoctorSerializer  # Remplacez DoctorSerializer par votre sérialiseur approprié
-    permission_classes = [IsDoctor]
+            start_patients = PatientSerializer(start_appointments, many=True).data
+            end_patients = PatientSerializer(end_appointments, many=True).data
 
-    def get_queryset(self):
-        return Doctor.objects.filter(user=self.request.user)
+            data = {
+                'start_patients': start_patients,
+                'end_patients': end_patients
+            }
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+            return Response(data)
+        else:
+            return Response({'message': 'Unauthorized'}, status=401)"""
 
-class CreatePrescriptionView(viewsets.ModelViewSet):
-    queryset = Prescription.objects.none()  # Crée un queryset vide
-    permission_classes = [IsAuthenticated]
-    serializer_class = PrescriptionSerializer
-    permission_classes = [IsDoctor]
+class SecretaryDashboardAPIView(APIView):
 
+    def get(self, request):
 
-
-class ViewPrescriptionView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Prescription.objects.all()  # Spécifiez la queryset appropriée
-    serializer_class = PrescriptionSerializer
-    permission_classes = [IsDoctor]
-
-    def perform_create(self, serializer):
-        doctor = Doctor.objects.get(user=self.request.user)
-        serializer.save(doctor=doctor)
-
-    def perform_update(self, serializer):
-        doctor = Doctor.objects.get(user=self.request.user)
-        serializer.save(doctor=doctor)
-
-
-class SecretaryViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = SecretarySerializer
-    queryset = Appointment.objects.all()
-    permission_classes = [IsSecretary]
-
-    def list(self, request):
         current_date = date.today()
 
         start_appointments = Appointment.objects.filter(start_date=current_date)
         end_appointments = Appointment.objects.filter(end_date=current_date)
 
-        start_patients = [appointment.patient for appointment in start_appointments]
-        end_patients = [appointment.patient for appointment in end_appointments]
+        start_patients = [PatientSerializer(appointment.patient).data for appointment in start_appointments]
+        end_patients = [PatientSerializer(appointment.patient).data for appointment in end_appointments]
 
-        start_patients_data = self.serializer_class(start_patients, many=True).data
-        end_patients_data = self.serializer_class(end_patients, many=True).data
-
-        context = {
-            'start_patients': start_patients_data,
-            'end_patients': end_patients_data
+        data = {
+            'start_patients': start_patients,
+            'end_patients': end_patients
         }
 
-        return Response(context)
+        return Response(data)
+
+
