@@ -87,7 +87,7 @@ class PatientDashboard(tk.Tk):
 
     def refresh_patient_list(self):
         self.last_activity_time = datetime.datetime.now()
-        response = requests.get('http://localhost:8000/api/secretary/dashboard/')
+        response = requests.get('https://sgmlille.pythonanywhere.com/api/secretary/dashboard/')
         if response.status_code == 200:
             data = response.json()
             self.start_patients = data['start_patients']
@@ -192,7 +192,7 @@ class LoginWindow(tk.Tk):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        response = requests.post('http://localhost:8000/api/user/login/',
+        response = requests.post('https://sgmlille.pythonanywhere.com/api/user/login/',
                                  data={'username': username, 'password': password})
 
         if response.status_code == 200:
