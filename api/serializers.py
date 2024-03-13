@@ -55,7 +55,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 class PrescriptionMedicineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription_medicine
-        fields = ['medicine_id', 'medicine_name', 'quantity', 'start_day', 'end_day', 'frequency', 'instruction']
+        fields = ['medicine_id', 'medicine_name', 'quantity','dosage', 'start_day', 'end_day', 'frequency', 'instruction']
 
 class PrescriptionTestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,55 +97,3 @@ class PatientProfileSerializer(serializers.Serializer):
             return PatientSerializer(obj['patient']).data
         return None
 
-
-
-"""class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'is_admin', 'is_patient', 'is_doctor', 'is_secretary', 'login_status']"""
-
-
-
-"""class PrescriptionSerializer(serializers.ModelSerializer):
-    doctor = DoctorSerializer()
-    patient = PatientSerializer()
-
-    class Meta:
-        model = Prescription
-        fields = '__all__'"""
-
-
-"""class PatientProfileSerializer(serializers.Serializer):
-    appointments = AppointmentSerializer(many=True)
-    prescriptions = PrescriptionSerializer(many=True)
-
-    def get_prescriptions(self, obj):
-        if obj.get('prescription'):
-            serializer = PrescriptionSerializer(obj['prescription'], many=True)
-            return serializer.data
-        return []
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['prescriptions'] = self.get_prescriptions(data)
-        return data
-"""
-
-"""class PatientProfileSerializer(serializers.Serializer):
-    doctor = DoctorSerializer(read_only=True)
-    appointments = AppointmentSerializer(many=True, read_only=True)
-    patient = PatientSerializer(read_only=True)
-    prescription = serializers.SerializerMethodField()
-    secretary = serializers.SerializerMethodField()
-
-    def get_prescription(self, obj):
-        if obj.get('prescription'):
-            # Serialize Prescription objects here if needed
-            return obj['prescription']
-        return []
-
-    def get_secretary(self, obj):
-        if obj.get('secretary'):
-            # Serialize Secretary object here if needed
-            return obj['secretary']
-        return None"""
