@@ -25,8 +25,9 @@ SECRET_KEY = 'django-insecure-gf+0#i-26mx8yu3s)$fn44@jkj8hww8n1py6^leuv4zv@bysy(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver','10.0.2.2']
+#ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,10 +40,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'book',
 
 
 ]
+
+REST_FRAMEWORK={
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'PAGE_SIZE': 10
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,10 +140,11 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/images/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/SGM/images')
-
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
 
 
 # Default primary key field type

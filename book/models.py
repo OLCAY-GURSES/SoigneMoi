@@ -2,6 +2,9 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db import models
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from datetime import date
 
 class UserManager(BaseUserManager):
@@ -103,7 +106,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=200, null=True, blank=True)
     phone_number = models.CharField(max_length=10,null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
-    date_of_bird = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     serial_number = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
@@ -118,7 +121,7 @@ class Doctor(models.Model):
     last_name = models.CharField(max_length=200, null=True)
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=200, null=True, blank=True)
-    date_of_bird = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     reg_number = models.CharField(max_length=6, null=True, blank=True)
     hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -168,47 +171,45 @@ class Prescription(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, blank=True)
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, blank=True)
     create_date = models.DateField(null=True, blank=True)
-    medicine_name = models.CharField(max_length=200, null=True, blank=True)
-    quantity = models.CharField(max_length=200, null=True, blank=True)
-    days = models.CharField(max_length=200, null=True, blank=True)
-    time = models.CharField(max_length=200, null=True, blank=True)
-    medicine_description = models.TextField(null=True, blank=True)
-    test_name = models.CharField(max_length=200, null=True, blank=True)
-    test_description = models.TextField(null=True, blank=True)
     extra_information = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.patient.last_name)
+        return str(self.patient)
 
 
 class Prescription_medicine(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, related_name='prescription_medicines', on_delete=models.CASCADE,
+                                     null=True, blank=True)
     medicine_id = models.AutoField(primary_key=True)
     medicine_name = models.CharField(max_length=200, null=True, blank=True)
     quantity = models.CharField(max_length=200, null=True, blank=True)
-    start_day = models.DateField( null=True, blank=True)
+    dosage = models.CharField(max_length=200, null=True, blank=True)  # Added dosage field
+    start_day = models.DateField(null=True, blank=True)
     end_day = models.DateField(null=True, blank=True)
     frequency = models.CharField(max_length=200, null=True, blank=True)
     instruction = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.prescription.prescription_id)
+        return str(self.medicine_id)
 
 
 class Prescription_test(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, related_name='prescription_test', on_delete=models.CASCADE,
+                                     null=True, blank=True)
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=200, null=True, blank=True)
-    test_description = models.TextField(null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)  # Added test_description field
     test_info_id = models.CharField(max_length=200, null=True, blank=True)
+    test_results = models.TextField(null=True, blank=True)
 
-    def __str__(self):
-        return str(self.prescription.prescription_id)
+def __str__(self):
+        return str(self.test_id)
 
 
 class Test_Information(models.Model):
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=200, null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)
     def __str__(self):
         return str(self.test_name)
 
@@ -220,7 +221,7 @@ class Secretary(models.Model):
     last_name = models.CharField(max_length=200, null=True)
     phone_number = models.CharField(max_length=200, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
-    date_of_bird = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     reg_number = models.CharField(max_length=6, null=True, blank=True)
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
     hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True)

@@ -1,19 +1,35 @@
 from django.urls import path, include
-from rest_framework import routers
-from api.views import LogoutView, LoginView, DoctorDashboardView, DoctorProfileView, CreatePrescriptionView, \
-    ViewPrescriptionView, SecretaryViewSet
+from rest_framework.routers import DefaultRouter
+from .views import UserViewSet, AdminViewSet, HospitalViewSet, SpecializationViewSet, PatientViewSet, DoctorViewSet, \
+    DoctorTimeSlotsViewSet, PrescriptionViewSet, PrescriptionMedicineViewSet, \
+    PrescriptionTestViewSet, TestInformationViewSet, ObtainAuthTokenView, SecretaryDashboardView, \
+    DoctorDashboardView, DoctorViewPrescription, PatientProfileAPIView, \
+     CreatePrescriptionView
 
-router = routers.DefaultRouter()
-router.register(r'logout', LogoutView, basename='logout')
-router.register(r'login', LoginView, basename='login')
-router.register(r'doctor_dashboard', DoctorDashboardView, basename='doctor_dashboard')
-router.register(r'doctor_profile', DoctorProfileView, basename='doctor_profile')
-router.register(r'create_prescription', CreatePrescriptionView, basename='create_prescription')
-router.register(r'view_prescription', ViewPrescriptionView, basename='view_prescription')
-router.register(r'secretary_dashboard', SecretaryViewSet, basename='secretary_dashboard')
-#router.register(r'other', OtherViewSet)
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'admins', AdminViewSet)
+router.register(r'hospitals', HospitalViewSet)
+router.register(r'specializations', SpecializationViewSet)
+router.register(r'patients', PatientViewSet)
+router.register(r'doctors', DoctorViewSet)
+router.register(r'doctor-time-slots', DoctorTimeSlotsViewSet)
+
+router.register(r'prescriptions', PrescriptionViewSet)
+router.register(r'prescription-medicines', PrescriptionMedicineViewSet)
+router.register(r'prescription-tests', PrescriptionTestViewSet)
+router.register(r'test-information', TestInformationViewSet)
+
 
 urlpatterns = [
-    # Autres URL de votre projet...
     path('', include(router.urls)),
+    path('api-token-auth/', ObtainAuthTokenView.as_view(), name='api_token_auth'),
+    path('secretary/dashboard/', SecretaryDashboardView.as_view(), name='secretary_dashboard'),
+    path('doctor/dashboard/', DoctorDashboardView.as_view(), name='doctor_dashboard'),
+    path('prescriptions/<int:pk>/', DoctorViewPrescription.as_view(), name='doctor-view-prescription'),
+    path('patient/profile/<int:pk>/', PatientProfileAPIView.as_view(), name='patient-profile'),
+    path('prescriptions/create/<int:pk>/', CreatePrescriptionView.as_view(), name='create_prescription'),
+    #path('prescriptions/create/<int:pk>/', CreatePrescriptionAPIView.as_view(), name='create-prescription'),
+
+
 ]

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
 from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment, \
-    Prescription, Prescription_medicine, Prescription_test,Secretary
+    Prescription, Prescription_medicine,Test_Information,Secretary
 import random
 import string
 
@@ -12,10 +12,10 @@ admin.site.register(Admin)
 admin.site.register(Patient)
 admin.site.register(Prescription)
 admin.site.register(Prescription_medicine)
-admin.site.register(Prescription_test)
+admin.site.register(Test_Information)
 
 class SecretaryAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name','phone_number', 'date_of_bird','reg_number',  'hospital_name')
+    list_display = ('first_name', 'last_name','phone_number', 'date_of_birth','reg_number',  'hospital_name')
     # other model administratif
 
     def save_model(self, request, obj, form, change):
@@ -33,7 +33,7 @@ admin.site.register(Secretary, SecretaryAdmin)
 
 
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('doctor_id', 'first_name', 'last_name', 'specialization', 'phone_number', 'date_of_bird','reg_number',  'hospital_name')
+    list_display = ('doctor_id', 'first_name', 'last_name', 'specialization', 'phone_number', 'date_of_birth','reg_number',  'hospital_name')
     # other model administratif
 
     def save_model(self, request, obj, form, change):
