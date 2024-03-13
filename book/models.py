@@ -178,11 +178,13 @@ class Prescription(models.Model):
 
 
 class Prescription_medicine(models.Model):
-    prescription = models.ForeignKey(Prescription, related_name='prescription_medicines', on_delete=models.CASCADE, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, related_name='prescription_medicines', on_delete=models.CASCADE,
+                                     null=True, blank=True)
     medicine_id = models.AutoField(primary_key=True)
     medicine_name = models.CharField(max_length=200, null=True, blank=True)
     quantity = models.CharField(max_length=200, null=True, blank=True)
-    start_day = models.DateField( null=True, blank=True)
+    dosage = models.CharField(max_length=200, null=True, blank=True)  # Added dosage field
+    start_day = models.DateField(null=True, blank=True)
     end_day = models.DateField(null=True, blank=True)
     frequency = models.CharField(max_length=200, null=True, blank=True)
     instruction = models.TextField(null=True, blank=True)
@@ -192,19 +194,22 @@ class Prescription_medicine(models.Model):
 
 
 class Prescription_test(models.Model):
-    prescription = models.ForeignKey(Prescription, related_name='prescription_test', on_delete=models.CASCADE, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, related_name='prescription_test', on_delete=models.CASCADE,
+                                     null=True, blank=True)
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=200, null=True, blank=True)
-    test_description = models.TextField(null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)  # Added test_description field
     test_info_id = models.CharField(max_length=200, null=True, blank=True)
+    test_results = models.TextField(null=True, blank=True)
 
-    def __str__(self):
+def __str__(self):
         return str(self.test_id)
 
 
 class Test_Information(models.Model):
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=200, null=True, blank=True)
+    test_description = models.TextField(null=True, blank=True)
     def __str__(self):
         return str(self.test_name)
 

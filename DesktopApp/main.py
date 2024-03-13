@@ -1,6 +1,8 @@
-import requests
 import tkinter as tk
 import datetime
+from django.contrib.auth import authenticate
+import requests
+from eventlet import event
 
 
 class PatientDashboard(tk.Tk):
@@ -87,16 +89,20 @@ class PatientDashboard(tk.Tk):
 
     def refresh_patient_list(self):
         self.last_activity_time = datetime.datetime.now()
-        #response = requests.get('http://localhost:8000/api/secretary/dashboard/')
-        response = requests.get('https://sgmlille.pythonanywhere.com/api/secretary/dashboard/')
 
+        headers = {
+            'Authorization': 'Token 8160bb43f83e8598a9425d651280466c9472b9eb',
+        }
+
+        #response = requests.get('http://localhost:8000/api/secretary/dashboard/', headers=headers)
+        response = requests.get('https://sgmlille.pythonanywhere.com/api/secretary/dashboard/')
         if response.status_code == 200:
             data = response.json()
             self.start_patients = data['start_patients']
             self.end_patients = data['end_patients']
 
-            self.incoming_listbox.delete(0, tk.END)
-            self.outgoing_listbox.delete(0, tk.END)
+            self.incoming_listbox.delete(0, tk.END)  # Clear the current content of the listbox
+            self.outgoing_listbox.delete(0, tk.END)  # Clear the current content of the listbox
 
             for patient in self.start_patients:
                 self.incoming_listbox.insert(tk.END, f"{patient['first_name']} {patient['last_name']}")
@@ -105,7 +111,6 @@ class PatientDashboard(tk.Tk):
                 self.outgoing_listbox.insert(tk.END, f"{patient['first_name']} {patient['last_name']}")
 
         self.after(60000, self.check_inactivity)
-
     def refresh_patient_list_immediately(self):
         self.refresh_patient_list()
 
@@ -115,7 +120,7 @@ class PatientDashboard(tk.Tk):
         if inactive_time.total_seconds() >= 300:  # 5 minutes of inactivity
             self.logout()
 
-        self.after(60000, self.check_inactivity)  # Check inactivity every minute
+        self.after(60000, self.check_inactivity, event)  # Check inactivity every minute
 
     def logout(self):
         self.destroy()
@@ -124,6 +129,8 @@ class PatientDashboard(tk.Tk):
     def logout_with_window(self):
         self.destroy()
         show_login_window()
+
+
 
 class LoginWindow(tk.Tk):
     def __init__(self):
@@ -152,8 +159,7 @@ class LoginWindow(tk.Tk):
         self.password_entry.pack(pady=10)
         self.password_entry.bind('<KeyRelease>', self.enable_login_button)
 
-        self.login_button = tk.Button(self.login_frame, text="Connexion", background="#32DFFF",
-                                      foreground="white",
+        self.login_button = tk.Button(self.login_frame, text="Connexion", background="#32DFFF", foreground="white",
                                       font=("Arial", 12), command=self.login)
         self.login_button.pack(pady=20)
         self.login_button.bind('<ButtonPress-1>', self.button_pressed)
@@ -194,31 +200,29 @@ class LoginWindow(tk.Tk):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        #response = requests.post('http://localhost:8000/api/user/login/',
-        #                        data={'username': username, 'password': password})
-        response = requests.post('https://sgmlille.pythonanywhere.com/api/user/login/',
-                                 data={'username': username, 'password': password})
+        #api_url = "http://localhost:8000/api/"  # Remplacez cette ligne par l'adresse de votre API
+        api_url = "https://sgmlille.pythonanywhere.com/api/"  # Remplacez cette ligne par l'adresse de votre API
+        response = requests.post(f"{api_url}/api-token-auth/", data={'username': username, 'password': password})
 
         if response.status_code == 200:
-            user_data = response.json()
-            if user_data['role'] == 'is_secretary':
+            user = response.json()
+            if 'is_secretary' in user and user['is_secretary']:
                 self.destroy()
                 show_patient_dashboard()
             else:
-                error_message = "Erreur de connexion : Vous n'êtes pas autorisé à accéder à cette fonctionnalité"
+                error_message = "Erreur de connexion : Vous n'êtes pas autorisé à accéder à cette interface."
                 self.label_error.config(text=error_message)
+
+
         else:
             error_message = "Erreur de connexion : Veuillez vérifier vos identifiants ou mots de passe."
             self.label_error.config(text=error_message)
             self.after(5000, self.hide_error_message)
             self.update_idletasks()
 
+
     def hide_error_message(self):
         self.label_error.config(text="")
-
-
-
-
 
 def show_login_window():
     login_window = LoginWindow()
@@ -230,5 +234,3 @@ def show_patient_dashboard():
 
 if __name__ == "__main__":
     show_login_window()
-
-
