@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-gf+0#i-26mx8yu3s)$fn44@jkj8hww8n1py6^leuv4zv@bysy(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver','10.0.2.2']
+#ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
 #ALLOWED_HOSTS = []
 
 # Application definition
@@ -40,10 +40,29 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'book',
     'rest_framework',
+<<<<<<< HEAD
     'rest_framework_simplejwt',
+=======
+    'rest_framework.authtoken',
+    'book',
+>>>>>>> 3a1623a302e78e3b2b97c1e2eafd76799e3410af
 
 
 ]
+
+REST_FRAMEWORK={
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'PAGE_SIZE': 10
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -105,11 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

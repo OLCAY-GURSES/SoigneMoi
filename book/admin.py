@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
 from book.models import User, Hospital, Specialization, Admin, Patient, Doctor, DoctorTimeSlots, Appointment, \
-    Prescription,  Secretary
+    Prescription, Prescription_medicine,Test_Information,Secretary
 import random
 import string
 
@@ -11,8 +11,8 @@ admin.site.register(Specialization)
 admin.site.register(Admin)
 admin.site.register(Patient)
 admin.site.register(Prescription)
-
-
+admin.site.register(Prescription_medicine)
+admin.site.register(Test_Information)
 
 class SecretaryAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name','phone_number', 'date_of_birth','reg_number',  'hospital_name')
