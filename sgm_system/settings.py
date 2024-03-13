@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-gf+0#i-26mx8yu3s)$fn44@jkj8hww8n1py6^leuv4zv@bysy(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver','10.0.2.2']
-#ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver','10.0.2.2']
+ALLOWED_HOSTS = ['sgmlille.pythonanywhere.com']
 #ALLOWED_HOSTS = []
 
 # Application definition
@@ -45,9 +45,12 @@ INSTALLED_APPS = [
 =======
     'rest_framework.authtoken',
     'book',
+<<<<<<< HEAD
 >>>>>>> 3a1623a302e78e3b2b97c1e2eafd76799e3410af
 
 
+=======
+>>>>>>> 4b6c5b2f1dd65519273ad8bfec3511bc61fb23c8
 ]
 
 REST_FRAMEWORK={
