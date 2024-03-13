@@ -71,9 +71,9 @@ def login_user(request):
             if request.user.is_doctor:
                 messages.success(request, 'Bonjour Docteur')
                 return redirect('doctor-dashboard')
-            #if request.user.is_secretary:
-             #   messages.success(request, 'Bonjour secretaire')
-              #  return redirect('secretary_list')
+            if request.user.is_secretary:
+                messages.success(request, 'Bonjour secretaire')
+                return redirect('secretary_list')
 
             else:
                 messages.error(request, "Informations d'identification non valides.")
