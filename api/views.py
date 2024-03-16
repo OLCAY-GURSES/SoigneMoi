@@ -3,6 +3,7 @@ from datetime import date
 from rest_framework import viewsets, status
 
 from rest_framework.authtoken.models import Token
+
 from book.models import User, Admin, Hospital, Specialization, Patient, Doctor, DoctorTimeSlots, Appointment, Prescription, Prescription_medicine, Prescription_test, Test_Information, Secretary
 from .serializers import UserSerializer, AdminSerializer, HospitalSerializer, SpecializationSerializer, \
     PatientSerializer, DoctorSerializer, DoctorTimeSlotsSerializer,  PrescriptionSerializer, \
@@ -122,6 +123,7 @@ class SecretaryDashboardView(APIView):
         }
 
         return Response(data)
+
 
 
 class DoctorDashboardView(APIView):
@@ -266,15 +268,6 @@ class ObtainAuthTokenView(APIView):
     throttle_classes = []
     permission_classes = []
     authentication_classes = []
-
-    """def post(self, request, *args, **kwargs):
-        serializer = AuthTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        is_secretary = user.is_secretary
-        is_doctor = user.is_doctor
-        return Response({'token': token.key, 'is_secretary': is_secretary,'is_doctor': is_doctor})"""
 
     def post(self, request, *args, **kwargs):
         serializer = AuthTokenSerializer(data=request.data)

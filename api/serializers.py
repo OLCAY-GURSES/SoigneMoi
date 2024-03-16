@@ -96,4 +96,3 @@ class PatientProfileSerializer(serializers.Serializer):
         if 'patient' in obj:
             return PatientSerializer(obj['patient']).data
         return None
-
