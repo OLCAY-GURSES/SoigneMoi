@@ -22,14 +22,14 @@ def createPatient(sender, instance, created, **kwargs):
             user = instance
             Patient.objects.create(
                 user=user, serial_number=generate_random_string())
-        elif instance.is_doctor:
+        """elif instance.is_doctor:
             user = instance
             Doctor.objects.create(
                 user=user)
         elif instance.is_secretary:
             user = instance
             Secretary.objects.create(
-                user=user)
+                user=user)"""
 
 
 

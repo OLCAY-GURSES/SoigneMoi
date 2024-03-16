@@ -68,9 +68,9 @@
 									</div>
 								</div>
 								<!-- /Invoice Item -->
-								
-								
-								
+
+
+
 								<!-- Invoice Item -->
 								<div class="invoice-item invoice-table-wrap mt-3">
 									<div class="row">
@@ -81,41 +81,43 @@
 											<div class="table-responsive">
 												<table class="invoice-table table table-bordered" >
 													<thead >
-														
-														
+
+
 														<tr style="background-color: #32DFFF">
 															<th class="text-center">Nom</th>
 															<th class="text-center">Quantité</th>
+															<th class="text-center">Dosage</th>
 															<th class="text-center">Fréquence</th>
 															<th class="text-center">Date début de traitement</th>
 															<th class="text-center">Date fin de traitement</th>
 															<th class="text-center">Instruction</th>
 
-															
-															
+
+
 														</tr>
 														{% for pm in prescription_medicine %}
 														<tr>
 
 															<td class="text-center">{{pm.medicine_name}}</td>
 															<td class="text-center">{{pm.quantity}}</td>
+															<td class="text-center">{{pm.dosage}}</td>
 															<td class="text-center">{{pm.frequency}}</td>
 															<td class="text-center">{{pm.start_day}}</td>
 															<td class="text-center">{{pm.end_day}}</td>
 															<td class="text-center">{{pm.instruction}}</td>
-															
-															
+
+
 														</tr>
 														{% endfor %}
 													</thead>
 												</table>
 											</div>
 										</div>
-										
+
 									</div>
 								</div>
 
-								
+
                                 <!-- Invoice Item -->
 								<div class="invoice-item invoice-table-wrap mt-4">
 									<div class="row">
@@ -129,13 +131,13 @@
 														<tr style="background-color: #32DFFF">
 															<th class="text-center">Nom</th>
 															<th class="text-center">Description</th>
-															
+
 														</tr>
 													</thead>
 													<tbody>
 														{% for pt in prescription_test %}
 														<tr>
-															
+
 															<td class="text-center">{{pt.test_name}}</td>
 															<td class="text-center">{{pt.test_description}}</td>
 
@@ -145,7 +147,7 @@
 												</table>
 											</div>
 										</div>
-										
+
 									</div>
 								</div>
 
@@ -157,41 +159,32 @@
 													<thead>
 														<tr>
 															<th><h2 class="text-center mb-4" ><b>Avis</b></h2></th>
-															
+
 														</tr>
 													</thead>
 													<tbody>
 														<tr>
 															<td>{{prescription.extra_information}}</td>
-												
-															
+
+
 														</tr>
-											
+
 													</tbody>
 												</table>
 											</div>
 										</div>
-										
-										
+
+
 									</div>
 									<br>
 									{% endfor %}
-								</div>
-								<!-- /Invoice Information -->
-								
-							</div>
-						</div>
-						</div>
-					</div>
-					
-
-				</div>	
-			</div>		   
-		</div>
-		<!-- /Page Content -->
-	<!-- /Main Wrapper -->
-	</div>
-	  
-
-  </body>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+    </div>
+    <!-- /Main Wrapper -->
+</body>
 {% endblock content %}

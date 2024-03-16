@@ -223,7 +223,7 @@ class Secretary(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     reg_number = models.CharField(max_length=6, null=True, blank=True)
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
+    #appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
     hospital_name = models.ForeignKey(Hospital, on_delete=models.SET_NULL, null=True)
 
 

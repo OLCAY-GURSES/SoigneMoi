@@ -4,7 +4,7 @@ from .views import UserViewSet, AdminViewSet, HospitalViewSet, SpecializationVie
     DoctorTimeSlotsViewSet, PrescriptionViewSet, PrescriptionMedicineViewSet, \
     PrescriptionTestViewSet, TestInformationViewSet, ObtainAuthTokenView, SecretaryDashboardView, \
     DoctorDashboardView, DoctorViewPrescription, PatientProfileAPIView, \
-     CreatePrescriptionView
+    CreatePrescriptionView, DoctorUpdateMedicineEndDate
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -29,6 +29,10 @@ urlpatterns = [
     path('prescriptions/<int:pk>/', DoctorViewPrescription.as_view(), name='doctor-view-prescription'),
     path('patient/profile/<int:pk>/', PatientProfileAPIView.as_view(), name='patient-profile'),
     path('prescriptions/create/<int:pk>/', CreatePrescriptionView.as_view(), name='create_prescription'),
+    path('prescriptions/<int:prescription_id>/medicines/<int:prescription_medicine_id>/end_date/',
+         DoctorUpdateMedicineEndDate.as_view(), name='update_medicine_end_date'),
+    #path('prescriptions/<int:prescription_id>/medicines/<int:prescription_medicine_id>/end_date/', UpdatePrescriptionMedicineEndDate.as_view(),\
+     #name='update-prescription-medicine-end-date'),
     #path('prescriptions/create/<int:pk>/', CreatePrescriptionAPIView.as_view(), name='create-prescription'),
 
 

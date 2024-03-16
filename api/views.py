@@ -3,6 +3,7 @@ from datetime import date
 from rest_framework import viewsets, status
 
 from rest_framework.authtoken.models import Token
+
 from book.models import User, Admin, Hospital, Specialization, Patient, Doctor, DoctorTimeSlots, Appointment, Prescription, Prescription_medicine, Prescription_test, Test_Information, Secretary
 from .serializers import UserSerializer, AdminSerializer, HospitalSerializer, SpecializationSerializer, \
     PatientSerializer, DoctorSerializer, DoctorTimeSlotsSerializer,  PrescriptionSerializer, \
@@ -124,13 +125,15 @@ class SecretaryDashboardView(APIView):
         return Response(data)
 
 
+
 class DoctorDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         current_date = timezone.now().date()
         current_date_str = str(current_date)
-        today_appointments = Appointment.objects.filter(start_date__lte=current_date, end_date__gte=current_date)
+        doctor = request.user.profile  # Récupérer l'instance Doctor associée à l'utilisateur authentifié
+        today_appointments = Appointment.objects.filter(start_date__lte=current_date, end_date__gte=current_date, doctor=doctor)
         today_appointments_data = []
 
         for appointment in today_appointments:
@@ -143,7 +146,6 @@ class DoctorDashboardView(APIView):
                 'end_date': str(appointment.end_date),
                 'motif': appointment.motif,
                 'serial_number': appointment.serial_number,
-                #'doctor_time_slots': appointment.doctor_time_slots.id,
                 'patient_id': appointment.patient.patient_id,
                 'patient_first_name': patient_first_name,
                 'patient_last_name': patient_last_name,
@@ -155,8 +157,10 @@ class DoctorDashboardView(APIView):
         data = {
             'today_appointments': today_appointments_data,
             'current_date': current_date_str,
+            'doctor_id': doctor.doctor_id,  # Ajouter l'ID du docteur
         }
         return Response(data)
+
 
 class CreatePrescriptionView(APIView):
     def post(self, request, pk):
@@ -179,6 +183,7 @@ class CreatePrescriptionView(APIView):
                     medicine_obj = Prescription_medicine(prescription=prescription)
                     medicine_obj.medicine_name = medicine.get('medicine_name', '')
                     medicine_obj.quantity = medicine.get('quantity', '')
+                    medicine_obj.dosage = medicine.get('dosage', '')
                     medicine_obj.frequency = medicine.get('frequency', '')
 
                     start_day_str = medicine.get('start_day', '')
@@ -241,6 +246,24 @@ class DoctorViewPrescription(APIView):
         return Response(serializer.data)
 
 
+class DoctorUpdateMedicineEndDate(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, prescription_id, prescription_medicine_id):
+        # Récupérer l'instance de Prescription_medicine
+        prescription_medicine = get_object_or_404(Prescription_medicine, prescription__prescription_id=prescription_id, medicine_id=prescription_medicine_id)
+
+        # Mettre à jour end_day à partir de request.data
+        end_day = request.data.get('end_day')
+        if end_day:
+            prescription_medicine.end_day = datetime.strptime(end_day, "%Y-%m-%d").date()
+            prescription_medicine.save()
+
+        serializer = PrescriptionMedicineSerializer(prescription_medicine)
+        return Response(serializer.data)
+
+
+
 class ObtainAuthTokenView(APIView):
     throttle_classes = []
     permission_classes = []
@@ -253,4 +276,12 @@ class ObtainAuthTokenView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         is_secretary = user.is_secretary
         is_doctor = user.is_doctor
-        return Response({'token': token.key, 'is_secretary': is_secretary,'is_doctor': is_doctor})
+
+        # Récupérer l'instance Doctor associée à l'utilisateur
+        doctor = None
+        if is_doctor:
+            doctor = Doctor.objects.get(user=user)
+            doctor_id = doctor.doctor_id
+
+        return Response({'token': token.key, 'is_secretary': is_secretary, 'is_doctor': is_doctor,
+                         'doctor_id': doctor_id if is_doctor else None})
