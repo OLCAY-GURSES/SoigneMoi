@@ -218,10 +218,18 @@ def booking(request, pk):
         appointment = Appointment(patient=patient, doctor=doctor)
         start_date = datetime.strptime(request.POST['appoint_start_date'], '%Y-%m-%d').date()
         end_date = datetime.strptime(request.POST['appoint_end_date'], '%Y-%m-%d').date()
-        message = request.POST['message']
+        message = request.POST.get('message', '')
 
-        if start_date < date.today() or end_date < date.today():
-            messages.error(request, 'Veuillez sélectionner une date à partir d\'aujourd\'hui ou ultérieure.')
+        if not message:
+            messages.error(request, 'Veuillez saisir un motif pour votre rendez-vous.')
+            return redirect('booking', pk=pk)
+
+        if start_date < date.today():
+            messages.error(request, 'Veuillez sélectionner une date de début à partir d\'aujourd\'hui ou ultérieure.')
+            return redirect('booking', pk=pk)
+
+        if start_date >= end_date:
+            messages.error(request, 'La date de début de séjour doit être antérieure à la date de fin de séjour.')
             return redirect('booking', pk=pk)
 
         current_date = start_date
