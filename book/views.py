@@ -2,16 +2,20 @@ from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.views import View
 from .forms import CustomUserCreationForm
-from django.views.decorators.cache import cache_control
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from book.models import Patient, User, Hospital, Admin, Specialization, Doctor, Appointment, Prescription, \
     DoctorTimeSlots, Prescription_test, Prescription_medicine, Secretary
 
 from django.shortcuts import redirect, render
-import datetime
 
 from django.db.models import Count, F
 from django.contrib import messages
@@ -21,303 +25,286 @@ import datetime
 from datetime import datetime, date, timedelta
 from .signals import generate_random_string
 from .utils import paginateHospitals
+
+
 # Create your views here.
+class HomeView(View):
+    def get(self, request):
+        self.hospitals = Hospital.objects.all()
+        context = {'hospitals': self.hospitals}
+        return render(request, 'book/home.html', context)
 
-@csrf_exempt
-def home(request):
-    hospitals = Hospital.objects.all()
-    context = {'hospitals': hospitals}
-    return render(request, 'book/home.html', context)
+class ListHospitalView(View):
+    def get(self, request):
+        self.hospitals = Hospital.objects.all()
+        self.custom_range, self.hospitals = paginateHospitals(request, self.hospitals, 3)
+        context = {'hospitals': self.hospitals, 'custom_range': self.custom_range}
+        return render(request, 'book/administration/list-hospital.html', context)
 
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, 'Utilisateur déconnecté')
+        return redirect('login')
 
-@csrf_exempt
-def list_hospital(request):
-    hospitals = Hospital.objects.all()
-    custom_range, hospitals = paginateHospitals(request, hospitals, 3)
-
-    context = {'hospitals': hospitals,'custom_range': custom_range}
-    return render(request, 'book/administration/list-hospital.html', context)
-
-
-@csrf_exempt
-@cache_control(no_cache=True, must_revalidate=True)
-def logoutUser(request):
-    logout(request)
-    messages.success(request, 'Utilisateur déconnecté')
-    return redirect('login')
-
-
-@csrf_exempt
-def login_user(request):
-    page = 'login'
-    if request.method == 'GET':
+class LoginView(View):
+    def get(self, request):
+        self.page = 'login'
         return render(request, 'book/login.html')
-    elif request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+
+    def post(self, request):
+        self.username = request.POST['username']
+        self.password = request.POST['password']
 
         try:
-            user = User.objects.get(username=username)
+            self.user = User.objects.get(username=self.username)
         except:
             pass
 
-        user = authenticate(username=username, password=password)
+        self.user = authenticate(username=self.username, password=self.password)
 
-        if user is not None:
-            login(request, user)
+        if self.user is not None:
+            login(request, self.user)
             if request.user.is_patient:
                 messages.success(request, "L'utilisateur s'est connecté avec succès")
                 return redirect('patient-dashboard')
-
             else:
                 messages.error(request, "Informations d'identification non valides.")
                 return redirect('logout')
         else:
             messages.error(request, "Nom d'utilisateur ou mot de passe incorrect")
+        return render(request, 'book/login.html')
 
-    return render(request, 'book/login.html')
+class PatientRegisterView(View):
+    def get(self, request):
+        self.page = 'patient-register'
+        self.form = CustomUserCreationForm()
+        context = {'page': self.page, 'form': self.form}
+        return render(request, 'book/patient/patient-register.html', context)
 
-
-@csrf_exempt
-def patient_register(request):
-    page = 'patient-register'
-    form = CustomUserCreationForm()
-
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            # form.save()
-            user = form.save(
-                commit=False)  # commit=False --> don't save to database yet (we have a chance to modify object)
-            user.is_patient = True
-            user.save()
+    def post(self, request):
+        self.form = CustomUserCreationForm(request.POST)
+        if self.form.is_valid():
+            self.user = self.form.save(commit=False)
+            self.user.is_patient = True
+            self.user.save()
             messages.success(request, "Le compte patient a été créé !")
-
-            # After user is created, we can log them in --> login(request, user)
             return redirect('login')
-
         else:
             messages.error(request, "Une erreur s'est produite lors de l'enregistrement!")
+        context = {'page': self.page, 'form': self.form}
+        return render(request, 'book/patient/patient-register.html', context)
 
-    context = {'page': page, 'form': form}
-    return render(request, 'book/patient/patient-register.html', context)
-
-
-@csrf_exempt
-@login_required(login_url="login")
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def patient_dashboard(request):
-    if request.user.is_patient:
-        patient = Patient.objects.get(user=request.user)
-        appointments = Appointment.objects.filter(patient=patient).order_by('-start_date')
-        prescription = Prescription.objects.filter(patient=patient).order_by('-prescription_id')
-        context = {'patient': patient, 'appointments': appointments,
-                   'prescription': prescription}
-    else:
-        return redirect('logout')
-
-    return render(request, 'book/patient/patient-dashboard.html', context)
+class PatientDashboardView(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_patient:
+            self.patient = Patient.objects.get(user=request.user)
+            self.appointments = Appointment.objects.filter(patient=self.patient).order_by('-start_date')
+            self.prescription = Prescription.objects.filter(patient=self.patient).order_by('-prescription_id')
+            context = {'patient': self.patient, 'appointments': self.appointments, 'prescription': self.prescription}
+        else:
+            return redirect('logout')
+        return render(request, 'book/patient/patient-dashboard.html', context)
 
 
-@csrf_exempt
-@login_required(login_url="login")
-def profile_settings(request):
-    if request.user.is_patient:
-        patient = Patient.objects.get(user=request.user)
 
-        if request.method == 'GET':
-            context = {'patient': patient}
+class ProfileSettingsView(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_patient:
+            self.patient = Patient.objects.get(user=request.user)
+            context = {'patient': self.patient}
             return render(request, 'book/patient/profile-settings.html', context)
+        else:
+            return redirect('logout')
 
-        elif request.method == 'POST':
+    def post(self, request):
+        if request.user.is_patient:
+            self.patient = Patient.objects.get(user=request.user)
+            self.first_name = request.POST.get('first_name')
+            self.last_name = request.POST.get('last_name')
+            self.date_of_birth_str = request.POST.get('date_of_birth')
+            self.phone_number = request.POST.get('phone_number')
+            self.address = request.POST.get('address')
 
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            date_of_birth = request.POST.get('date_of_birth')
-            phone_number = request.POST.get('phone_number')
-            address = request.POST.get('address')
+            if not self.date_of_birth_str:
+                messages.error(request, "La date de naissance est manquante.")
+                return redirect('profile-settings')
 
-            if not date_of_birth:
-                return HttpResponseBadRequest("L'âge est manquant.")
+            try:
+                self.date_of_birth = datetime.strptime(self.date_of_birth_str, '%Y-%m-%d').date()
+            except ValueError:
+                messages.error(request, "Le format de la date de naissance doit être aaaa-mm-jj.")
+                return redirect('profile-settings')
 
-                date_of_birth = datetime.strptime(date_of_birth, '%d/%m/%Y').date()
+            self.patient.first_name = self.first_name
+            self.patient.last_name = self.last_name
+            self.patient.date_of_birth = self.date_of_birth
+            self.patient.phone_number = self.phone_number
+            self.patient.address = self.address
+            self.patient.save()
 
+            messages.success(request, 'Profil mis à jour avec succès.')
+            return redirect('patient-dashboard')
+        else:
+            return redirect('logout')
 
-            patient.first_name = first_name
-            patient.last_name = last_name
-            patient.date_of_birth = date_of_birth
-            patient.phone_number = phone_number
-            patient.address = address
-
-            patient.save()
-
-            messages.success(request, 'Sauvegarde confirmé')
-
+class ChangePasswordView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        try:
+            self.patient = Patient.objects.get(user_id=pk)
+            context = {"patient": self.patient}
+            return render(request, 'book/password/change-password.html', context)
+        except Patient.DoesNotExist:
+            messages.error(request, "Utilisateur introuvable.")
             return redirect('patient-dashboard')
 
-    else:
-        return redirect('logout')
+    def post(self, request, pk):
+        try:
+            self.patient = Patient.objects.get(user_id=pk)
+            self.new_password = request.POST["new_password"]
+            self.confirm_password = request.POST["confirm_password"]
+            if self.new_password == self.confirm_password:
+                request.user.set_password(self.new_password)
+                request.user.save()
+                messages.success(request, "Le mot de passe a été modifié avec succès")
+                return redirect("patient-dashboard")
+            else:
+                messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
+                return redirect("change-password", pk=pk)
+        except Patient.DoesNotExist:
+            messages.error(request, "Utilisateur introuvable.")
+            return redirect('patient-dashboard')
 
-@csrf_exempt
-@login_required(login_url="login")
-def change_password(request, pk):
-    patient = Patient.objects.get(user_id=pk)
-    context = {"patient": patient}
-    if request.method == "POST":
-        new_password = request.POST["new_password"]
-        confirm_password = request.POST["confirm_password"]
-        if new_password == confirm_password:
-
-            request.user.set_password(new_password)
-            request.user.save()
-            messages.success(request, "Le mot de passe a été modifié avec succès")
-            return redirect("patient-dashboard")
+class SearchView(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_authenticated and request.user.is_patient:
+            self.search_query = request.GET.get('search_query', '')
+            self.doctors = Doctor.objects.filter(
+                Q(last_name__icontains=self.search_query) |
+                Q(first_name__icontains=self.search_query) |
+                Q(specialization__specialization_name__icontains=self.search_query)
+            )
+            self.patient = Patient.objects.get(user=request.user)
+            context = {'patient': self.patient, 'doctors': self.doctors, 'search_query': self.search_query}
+            return render(request, 'book/patient/search.html', context)
         else:
-            messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
-            return redirect("change-password", pk)
-    return render(request, 'book/password/change-password.html', context)
+            logout(request)
+            messages.error(request, 'Non autorisé')
+            return render(request, 'login.html')
 
+class BookingView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        self.patient = request.user.patient
+        self.doctor = Doctor.objects.get(doctor_id=pk)
 
-@csrf_exempt
-@login_required(login_url="login")
-def search(request):
-    if request.user.is_authenticated and request.user.is_patient:
+        # Check if profile settings are filled
+        if not (self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
+            messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
+            return redirect('profile-settings')
 
-        search_query = ''
+        self.unavailable_dates = self.get_unavailable_dates(self.doctor, date.today())
+        context = {'patient': self.patient, 'doctor': self.doctor, 'unavailable_dates': self.unavailable_dates}
+        return render(request, 'book/patient/booking.html', context)
 
-        if request.GET.get('search_query'):
-            search_query = request.GET.get('search_query')
+    def post(self, request, pk):
+        self.patient = request.user.patient
+        self.doctor = Doctor.objects.get(doctor_id=pk)
 
-        doctors = Doctor.objects.filter(
-            Q(last_name__icontains=search_query) |
-            Q(first_name__icontains=search_query) |
-            Q(specialization__specialization_name__icontains=search_query)
+        self.appointment = Appointment(patient=self.patient, doctor=self.doctor)
+        self.start_date = datetime.strptime(request.POST['appoint_start_date'], '%Y-%m-%d').date()
+        self.end_date = datetime.strptime(request.POST['appoint_end_date'], '%Y-%m-%d').date()
+        self.message = request.POST.get('message', '')
 
-        )
-
-        patient = Patient.objects.get(user=request.user)
-        context = {'patient': patient, 'doctors': doctors,  'search_query': search_query}
-        return render(request, 'book/patient/search.html', context)
-    else:
-        logout(request)
-        messages.error(request, 'Non autorisé')
-        return render(request, 'login.html')
-
-@csrf_exempt
-@login_required(login_url="login")
-def booking(request, pk):
-    patient = request.user.patient
-    doctor = Doctor.objects.get(doctor_id=pk)
-    # Check if profile settings are filled
-    if not (
-            patient.first_name and patient.last_name and patient.date_of_birth and patient.phone_number and patient.address):
-        messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
-        return redirect('profile-settings')
-
-    if request.method == 'POST':
-        appointment = Appointment(patient=patient, doctor=doctor)
-        start_date = datetime.strptime(request.POST['appoint_start_date'], '%Y-%m-%d').date()
-        end_date = datetime.strptime(request.POST['appoint_end_date'], '%Y-%m-%d').date()
-        message = request.POST.get('message', '')
-
-        if not message:
+        if not self.message:
             messages.error(request, 'Veuillez saisir un motif pour votre rendez-vous.')
             return redirect('booking', pk=pk)
 
-        if start_date < date.today():
+        if self.start_date < date.today():
             messages.error(request, 'Veuillez sélectionner une date de début à partir d\'aujourd\'hui ou ultérieure.')
             return redirect('booking', pk=pk)
 
-        if start_date >= end_date:
+        if self.start_date >= self.end_date:
             messages.error(request, 'La date de début de séjour doit être antérieure à la date de fin de séjour.')
             return redirect('booking', pk=pk)
 
-        current_date = start_date
-        while current_date <= end_date:
-            is_present = DoctorTimeSlots.objects.filter(
-                doctor=doctor,
-                doc_start_date__lte=current_date,
-                doc_end_date__gte=current_date
+        self.current_date = self.start_date
+        while self.current_date <= self.end_date:
+            self.is_present = DoctorTimeSlots.objects.filter(
+                doctor=self.doctor,
+                doc_start_date__lte=self.current_date,
+                doc_end_date__gte=self.current_date
             ).exists()
 
-            if not is_present:
+            if not self.is_present:
                 messages.error(request, 'Le médecin n\'est pas présent pendant la période sélectionnée. Veuillez choisir une autre période.')
                 return redirect('booking', pk=pk)
 
-            daily_quota = 5
-            patient_count = Appointment.objects.filter(
-                doctor=doctor,
-                start_date__lte=current_date,
-                end_date__gte=current_date
+            self.daily_quota = 5
+            self.patient_count = Appointment.objects.filter(
+                doctor=self.doctor,
+                start_date__lte=self.current_date,
+                end_date__gte=self.current_date
             ).count()
 
-            if patient_count >= daily_quota:
+            if self.patient_count >= self.daily_quota:
                 messages.error(request, 'Le médecin n\'est pas disponible aux dates choisies. Veuillez sélectionner une autre date. Le planning du médecin est complet pour les jours suivants :')
-                booking_url = reverse('booking', args=[pk])
-                return redirect(f'{booking_url}?dates_displayed=True')
+                self.booking_url = reverse('booking', args=[pk])
+                return redirect(f'{self.booking_url}?dates_displayed=True')
 
-            current_date += timedelta(days=1)
+            self.current_date += timedelta(days=1)
 
-        appointment.start_date = start_date
-        appointment.end_date = end_date
-        appointment.serial_number = generate_random_string()
-        appointment.message = message
-        appointment.save()
+        self.appointment.start_date = self.start_date
+        self.appointment.end_date = self.end_date
+        self.appointment.serial_number = generate_random_string()
+        self.appointment.message = self.message
+        self.appointment.save()
 
         messages.success(request, 'Séjour réservé avec succès.')
         return redirect('patient-dashboard')
 
-    unavailable_dates = get_unavailable_dates(doctor, date.today())
-    context = {'patient': patient, 'doctor': doctor, 'unavailable_dates': unavailable_dates}
-    return render(request, 'book/patient/booking.html', context)
+    def get_unavailable_dates(self, doctor, today):
+        self.unavailable_dates = []
 
-def get_unavailable_dates(doctor, today):
-    unavailable_dates = []
+        self.end_date = today + timedelta(days=365)
+        self.delta = timedelta(days=1)
 
-    end_date = today + timedelta(days=365)
-    delta = timedelta(days=1)
-
-    while today <= end_date:
-        is_present = DoctorTimeSlots.objects.filter(
-            doctor=doctor,
-            doc_start_date__lte=today,
-            doc_end_date__gte=today
-        ).exists()
-
-        if is_present:
-            daily_quota = 5
-            patient_count = Appointment.objects.filter(
+        while today <= self.end_date:
+            self.is_present = DoctorTimeSlots.objects.filter(
                 doctor=doctor,
-                start_date__lte=today,
-                end_date__gte=today
-            ).count()
+                doc_start_date__lte=today,
+                doc_end_date__gte=today
+            ).exists()
 
-            if patient_count >= daily_quota:
-                unavailable_dates.append(today)
+            if self.is_present:
+                self.daily_quota = 5
+                self.patient_count = Appointment.objects.filter(
+                    doctor=doctor,
+                    start_date__lte=today,
+                    end_date__gte=today
+                ).count()
 
-        today += delta
+                if self.patient_count >= self.daily_quota:
+                    self.unavailable_dates.append(today)
 
-    return unavailable_dates
+            today += self.delta
 
+        return self.unavailable_dates
 
+class PrescriptionView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        if request.user.is_patient:
+            self.patient = Patient.objects.get(user=request.user)
+            self.prescription = Prescription.objects.filter(prescription_id=pk)
+            self.prescription_medicine = Prescription_medicine.objects.filter(prescription__in=self.prescription)
+            self.prescription_test = Prescription_test.objects.filter(prescription__in=self.prescription)
 
+            context = {
+                'patient': self.patient,
+                'prescription': self.prescription,
+                'prescription_test': self.prescription_test,
+                'prescription_medicine': self.prescription_medicine
+            }
+            return render(request, 'book/patient/prescription-view.html', context)
+        else:
+            return redirect('logout')
 
-
-@csrf_exempt
-@login_required(login_url="login")
-def prescription_view(request, pk):
-    if request.user.is_patient:
-        patient = Patient.objects.get(user=request.user)
-        prescription = Prescription.objects.filter(prescription_id=pk)
-        prescription_medicine = Prescription_medicine.objects.filter(prescription__in=prescription)
-        prescription_test = Prescription_test.objects.filter(prescription__in=prescription)
-
-        context = {
-            'patient': patient,
-            'prescription': prescription,
-            'prescription_test': prescription_test,
-            'prescription_medicine': prescription_medicine
-        }
-        return render(request, 'book/patient/prescription-view.html', context)
-    else:
-        return redirect('logout')
