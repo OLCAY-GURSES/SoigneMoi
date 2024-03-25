@@ -307,4 +307,3 @@ class PrescriptionView(LoginRequiredMixin, View):
             return render(request, 'book/patient/prescription-view.html', context)
         else:
             return redirect('logout')
-
