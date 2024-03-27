@@ -92,7 +92,7 @@ class PatientRegisterView(View):
             return redirect('login')
         else:
             messages.error(request, "Une erreur s'est produite lors de l'enregistrement!")
-        context = {'page': self.page, 'form': self.form}
+        context = {'form': self.form}
         return render(request, 'book/patient/patient-register.html', context)
 
 class PatientDashboardView(LoginRequiredMixin, View):
@@ -194,8 +194,10 @@ class SearchView(LoginRequiredMixin, View):
 
 class BookingView(LoginRequiredMixin, View):
     def get(self, request, pk):
+
         self.patient = request.user.patient
         self.doctor = Doctor.objects.get(doctor_id=pk)
+
 
         # Check if profile settings are filled
         if not (self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
@@ -262,9 +264,9 @@ class BookingView(LoginRequiredMixin, View):
         messages.success(request, 'Séjour réservé avec succès.')
         return redirect('patient-dashboard')
 
-    def get_unavailable_dates(self, doctor, today):
+    def get_unavailable_dates(self, doctor):
         self.unavailable_dates = []
-
+        today = date.today()
         self.end_date = today + timedelta(days=365)
         self.delta = timedelta(days=1)
 
