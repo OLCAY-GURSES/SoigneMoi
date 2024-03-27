@@ -1,11 +1,8 @@
 from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
-from django.utils import timezone
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.shortcuts import redirect
 from django.views import View
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login, authenticate, logout
@@ -92,7 +89,7 @@ class PatientRegisterView(View):
             return redirect('login')
         else:
             messages.error(request, "Une erreur s'est produite lors de l'enregistrement!")
-        context = {'page': self.page, 'form': self.form}
+        context = {'form': self.form}
         return render(request, 'book/patient/patient-register.html', context)
 
 class PatientDashboardView(LoginRequiredMixin, View):
@@ -156,25 +153,35 @@ class ChangePasswordView(LoginRequiredMixin, View):
             return render(request, 'book/password/change-password.html', context)
         except Patient.DoesNotExist:
             messages.error(request, "Utilisateur introuvable.")
-            return redirect('patient-dashboard')
+            return render(request, 'book/password/change-password.html', {'messages': messages.get_messages(request)})
 
     def post(self, request, pk):
         try:
             self.patient = Patient.objects.get(user_id=pk)
+            self.old_password = request.POST["old_password"]
             self.new_password = request.POST["new_password"]
             self.confirm_password = request.POST["confirm_password"]
-            if self.new_password == self.confirm_password:
-                request.user.set_password(self.new_password)
-                request.user.save()
-                messages.success(request, "Le mot de passe a été modifié avec succès")
-                return redirect("patient-dashboard")
+
+            if request.user.check_password(self.old_password):
+                if self.new_password == self.confirm_password:
+                    request.user.set_password(self.new_password)
+                    request.user.save()
+                    messages.success(request, "Le mot de passe a été modifié avec succès")
+                    # Connecter l'utilisateur avec le nouveau mot de passe
+                    user = authenticate(username=request.user.username, password=self.new_password)
+                    if user is not None:
+                        login(request, user)
+                    # Rediriger vers la page de connexion
+                    return redirect('login')
+                else:
+                    messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
             else:
-                messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
-                return redirect("change-password", pk=pk)
+                messages.error(request, "L'ancien mot de passe est incorrect")
+
+            return render(request, 'book/password/change-password.html', {'patient': self.patient, 'messages': messages.get_messages(request)})
         except Patient.DoesNotExist:
             messages.error(request, "Utilisateur introuvable.")
-            return redirect('patient-dashboard')
-
+            return render(request, 'book/password/change-password.html', {'messages': messages.get_messages(request)})
 class SearchView(LoginRequiredMixin, View):
     def get(self, request):
         if request.user.is_authenticated and request.user.is_patient:
@@ -194,8 +201,10 @@ class SearchView(LoginRequiredMixin, View):
 
 class BookingView(LoginRequiredMixin, View):
     def get(self, request, pk):
+
         self.patient = request.user.patient
         self.doctor = Doctor.objects.get(doctor_id=pk)
+
 
         # Check if profile settings are filled
         if not (self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
@@ -262,9 +271,9 @@ class BookingView(LoginRequiredMixin, View):
         messages.success(request, 'Séjour réservé avec succès.')
         return redirect('patient-dashboard')
 
-    def get_unavailable_dates(self, doctor, today):
+    def get_unavailable_dates(self, doctor):
         self.unavailable_dates = []
-
+        today = date.today()
         self.end_date = today + timedelta(days=365)
         self.delta = timedelta(days=1)
 

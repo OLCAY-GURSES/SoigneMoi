@@ -164,20 +164,28 @@ class DoctorDashboardView(APIView):
 
 class CreatePrescriptionView(APIView):
     def post(self, request, pk):
+        # Check if the logged-in user is a doctor
         if request.user.is_doctor:
+            # Retrieve the doctor from the logged-in user
             doctor = Doctor.objects.get(user=request.user)
+            # Retrieve the patient from the provided ID
             patient = Patient.objects.get(patient_id=pk)
+            # Define the creation date of the prescription
             create_date = timezone.now().date()
 
+            # Create a new prescription
             prescription = Prescription(doctor=doctor, patient=patient)
 
+            # Retrieve the prescription data from the request
             medicine_data = request.data.get('prescription_medicines', [])
             extra_information = request.data.get('extra_information', '')
 
+            # Fill in the prescription fields
             prescription.extra_information = extra_information
             prescription.create_date = create_date
             prescription.save()
 
+            # Save the prescription medicines
             if medicine_data:
                 for medicine in medicine_data:
                     medicine_obj = Prescription_medicine(prescription=prescription)
@@ -185,19 +193,17 @@ class CreatePrescriptionView(APIView):
                     medicine_obj.quantity = medicine.get('quantity', '')
                     medicine_obj.dosage = medicine.get('dosage', '')
                     medicine_obj.frequency = medicine.get('frequency', '')
-
+                    # Convert the start and end dates of the treatment
                     start_day_str = medicine.get('start_day', '')
                     end_day_str = medicine.get('end_day', '')
-
                     if start_day_str:
                         medicine_obj.start_day = datetime.strptime(start_day_str, '%d/%m/%Y').date()
-
                     if end_day_str:
                         medicine_obj.end_day = datetime.strptime(end_day_str, '%d/%m/%Y').date()
-
                     medicine_obj.instruction = medicine.get('instruction', '')
                     medicine_obj.save()
 
+            # Save the prescription tests
             test_data = request.data.get('prescription_test', [])
             if test_data:
                 for test in test_data:
@@ -206,9 +212,11 @@ class CreatePrescriptionView(APIView):
                     test_obj.test_description = test.get('test_description', '')
                     test_obj.save()
 
+            # Return the data of the created prescription
             serializer = PrescriptionSerializer(prescription)
             return Response(serializer.data, status=201)
 
+        # If the user is not a doctor, return an access denied message
         return Response({'detail': 'Access denied.'}, status=403)
 
 class DoctorViewPrescription(APIView):
