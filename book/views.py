@@ -1,11 +1,8 @@
 from django.db.models import Count, Q
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.urls import reverse
-from django.utils import timezone
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.shortcuts import redirect
 from django.views import View
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login, authenticate, logout
@@ -156,25 +153,35 @@ class ChangePasswordView(LoginRequiredMixin, View):
             return render(request, 'book/password/change-password.html', context)
         except Patient.DoesNotExist:
             messages.error(request, "Utilisateur introuvable.")
-            return redirect('patient-dashboard')
+            return render(request, 'book/password/change-password.html', {'messages': messages.get_messages(request)})
 
     def post(self, request, pk):
         try:
             self.patient = Patient.objects.get(user_id=pk)
+            self.old_password = request.POST["old_password"]
             self.new_password = request.POST["new_password"]
             self.confirm_password = request.POST["confirm_password"]
-            if self.new_password == self.confirm_password:
-                request.user.set_password(self.new_password)
-                request.user.save()
-                messages.success(request, "Le mot de passe a été modifié avec succès")
-                return redirect("patient-dashboard")
+
+            if request.user.check_password(self.old_password):
+                if self.new_password == self.confirm_password:
+                    request.user.set_password(self.new_password)
+                    request.user.save()
+                    messages.success(request, "Le mot de passe a été modifié avec succès")
+                    # Connecter l'utilisateur avec le nouveau mot de passe
+                    user = authenticate(username=request.user.username, password=self.new_password)
+                    if user is not None:
+                        login(request, user)
+                    # Rediriger vers la page de connexion
+                    return redirect('login')
+                else:
+                    messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
             else:
-                messages.error(request, "Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques")
-                return redirect("change-password", pk=pk)
+                messages.error(request, "L'ancien mot de passe est incorrect")
+
+            return render(request, 'book/password/change-password.html', {'patient': self.patient, 'messages': messages.get_messages(request)})
         except Patient.DoesNotExist:
             messages.error(request, "Utilisateur introuvable.")
-            return redirect('patient-dashboard')
-
+            return render(request, 'book/password/change-password.html', {'messages': messages.get_messages(request)})
 class SearchView(LoginRequiredMixin, View):
     def get(self, request):
         if request.user.is_authenticated and request.user.is_patient:
