@@ -3,6 +3,8 @@ from datetime import datetime, date, timedelta
 
 import django
 
+import book
+
 # Configurer les paramètres Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sgm_system.settings')
 django.setup()
@@ -13,7 +15,7 @@ from django.contrib.auth import get_user_model, authenticate
 from book.models import *
 from datetime import date
 
-from book.views import get_unavailable_dates
+
 
 from django.contrib.auth import get_user_model
 from book.models import Patient
@@ -146,39 +148,13 @@ class BookingTestCase(TestCase):
 
 
 class UnavailableDatesTestCase(unittest.TestCase):
-    def test_get_unavailable_dates(self):
-        doctor = Doctor.objects.create(last_name="Dr. John Doe")
-        today = date.today()
-
-        # Créer un DoctorTimeSlots avec des dates appropriées
-        DoctorTimeSlots.objects.create(
-            doctor=doctor,
-            doc_start_date=today - timedelta(days=1),
-            doc_end_date=today + timedelta(days=1)
-        )
-
-        # Créer un utilisateur
-        user = User.objects.create(email="patients11@test.com")
-
-        # Créer une instance de Patient correspondant à l'utilisateur
-        patient = Patient.objects.create(user=user)
-
-        # Créer des rendez-vous pour atteindre la limite quotidienne
-        daily_quota = 5
-        for _ in range(daily_quota):
-            Appointment.objects.create(
-                doctor=doctor,
-                start_date=today - timedelta(days=1),
-                end_date=today + timedelta(days=1),
-                patient=patient  # Attribuer l'instance de Patient à l'objet Appointment
-            )
-
     def test_get_unavailable_dates_no_slots(self):
         doctor = Doctor.objects.create(last_name="Dr. Jane Smith")
         today = date.today()
 
         # Exécuter la fonction get_unavailable_dates sans créer de DoctorTimeSlots
-        unavailable_dates = get_unavailable_dates(doctor, today)
+        booking_view = book.views.BookingView()
+        unavailable_dates = booking_view.get_unavailable_dates(doctor)
 
         # Vérifier que la liste des dates non disponibles est vide
         expected_unavailable_dates = []
@@ -196,7 +172,8 @@ class UnavailableDatesTestCase(unittest.TestCase):
         )
 
         # Exécuter la fonction get_unavailable_dates sans créer de rendez-vous
-        unavailable_dates = get_unavailable_dates(doctor, today)
+        booking_view = book.views.BookingView()
+        unavailable_dates = booking_view.get_unavailable_dates(doctor)
 
         # Vérifier que la liste des dates non disponibles est vide
         expected_unavailable_dates = []

@@ -56,6 +56,11 @@ REST_FRAMEWORK={
     'PAGE_SIZE': 10
 }
 
+# Authentication settings
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'patient-dashboard'
+LOGOUT_REDIRECT_URL = 'login'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
