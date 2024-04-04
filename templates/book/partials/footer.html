@@ -41,9 +41,11 @@
         {% if user.is_authenticated and user.is_patient  %}
         <li><a href="{% url 'profile-settings' %}">Profile</a></li>
         {% endif %}
+        {% comment %}
         {% if user.is_authenticated and user.is_doctor  %}
         <li><a href="{% url 'doctor-profile-settings' %}">Profile</a></li>
         {% endif %}
+        {% endcomment %}
         <li><a href="{% url 'patient-dashboard' %}">Mes séjours</a></li>
       </ul>
       {% if not user.is_authenticated %}

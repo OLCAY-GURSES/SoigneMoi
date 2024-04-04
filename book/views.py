@@ -50,28 +50,31 @@ class LoginView(View):
         return render(request, 'book/login.html')
 
     def post(self, request):
-        self.username = request.POST['username']
+        self.email = request.POST['email']
         self.password = request.POST['password']
 
         try:
-            self.user = User.objects.get(username=self.username)
-        except:
-            pass
+            self.user = User.objects.get(email=self.email)
+        except User.DoesNotExist:
+            messages.error(request, "Adresse e-mail ou mot de passe incorrect", extra_tags='danger')
+            return render(request, 'book/login.html')
 
-        self.user = authenticate(username=self.username, password=self.password)
+        self.user = authenticate(email=self.email, password=self.password)
 
         if self.user is not None:
             login(request, self.user)
             if request.user.is_patient:
-                messages.success(request, "L'utilisateur s'est connecté avec succès")
+                messages.success(request, "Utilisateur connecté avec succès")
                 return redirect('patient-dashboard')
+            elif request.user.is_admin:
+                messages.success(request, "Administrateur connecté avec succès")
+                return redirect('/')
             else:
-                messages.error(request, "Informations d'identification non valides.")
-                return redirect('logout')
+                messages.error(request, "Vous n'êtes pas autorisé à accéder à cette page", extra_tags='danger')
+                return render(request, 'book/login.html')
         else:
-            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect")
-        return render(request, 'book/login.html')
-
+            messages.error(request, "Adresse e-mail ou mot de passe incorrect", extra_tags='danger')
+            return render(request, 'book/login.html')
 class PatientRegisterView(View):
     def get(self, request):
         self.page = 'patient-register'
