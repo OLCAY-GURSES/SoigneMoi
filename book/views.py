@@ -204,17 +204,15 @@ class SearchView(LoginRequiredMixin, View):
 
 class BookingView(LoginRequiredMixin, View):
     def get(self, request, pk):
-
         self.patient = request.user.patient
         self.doctor = Doctor.objects.get(doctor_id=pk)
-
 
         # Check if profile settings are filled
         if not (self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
             messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
             return redirect('profile-settings')
 
-        self.unavailable_dates = self.get_unavailable_dates(self.doctor, date.today())
+        self.unavailable_dates = self.get_unavailable_dates(self.doctor)
         context = {'patient': self.patient, 'doctor': self.doctor, 'unavailable_dates': self.unavailable_dates}
         return render(request, 'book/patient/booking.html', context)
 
