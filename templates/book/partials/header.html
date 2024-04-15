@@ -63,7 +63,7 @@
   <ul class="nav header-navbar-rht">
 
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and user.is_patient or user.is_admin %}
     <li class="nav-item">
       <a class="nav-link header-login" href="{% url 'logout' %}">Déconnexion</a>
     </li>

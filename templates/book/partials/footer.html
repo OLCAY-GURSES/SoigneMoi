@@ -31,24 +31,63 @@
       </ul>
       <ul class="box">
         <li class="link_name">Services</li>
+        {% if not user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Nos spécialitées</a></li>
+        <li><a href="{% url 'login' %}">Nos docteurs</a></li>
+
+        {% elif user.is_authenticated and user.is_patient  %}
+
          <li><a href="{% url 'search'%}">Nos spécialitées</a></li>
-        <li><a href="{% url 'search'%}">Nos docteurs</a></li>
+         <li><a href="{% url 'search'%}">Nos docteurs</a></li>
+
+        {% elif user.is_authenticated and user.is_admin %}
+
+        <li><a href="/">Nos spécialitées</a></li>
+         <li><a href="/">Nos docteurs</a></li>
+
+        {% elif user.is_authenticated and user.is_doctor or user.is_secretary%}
+        <li><a href="{% url 'login' %}">Nos spécialitées</a></li>
+        <li><a href="{% url 'login' %}">Nos docteurs</a></li>
+        {% endif %}
 
       </ul>
       <ul class="box">
         <li class="link_name">Compte</li>
+        {% if not user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Mon compte</a></li>
+        <li><a href="{% url 'login' %}">Mes séjours</a></li>
+        <li><a href="{% url 'login' %}">Profile</a></li>
+
+        {% elif user.is_authenticated and user.is_doctor or user.is_secretary%}
+        <li><a href="{% url 'login' %}">Mon compte</a></li>
+        <li><a href="{% url 'login' %}">Mes séjours</a></li>
+        <li><a href="{% url 'login' %}">Profile</a></li>
+
+        {% elif user.is_authenticated and user.is_patient  %}
         <li><a href="{% url 'patient-dashboard' %}">Mon compte</a></li>
-        {% if user.is_authenticated and user.is_patient  %}
+        <li><a href="{% url 'patient-dashboard' %}">Mes séjours</a></li>
         <li><a href="{% url 'profile-settings' %}">Profile</a></li>
+
+        {% elif user.is_authenticated and user.is_admin %}
+        <li><a href="/">Mon compte</a></li>
+        <li><a href="/">Mes séjours</a></li>
+        <li><a href="/">Profile</a></li>
         {% endif %}
+
         {% comment %}
         {% if user.is_authenticated and user.is_doctor  %}
         <li><a href="{% url 'doctor-profile-settings' %}">Profile</a></li>
         {% endif %}
         {% endcomment %}
-        <li><a href="{% url 'patient-dashboard' %}">Mes séjours</a></li>
+
       </ul>
       {% if not user.is_authenticated %}
+      <ul class="box input-box">
+        <li class="link_name">S'inscrire</li>
+
+        <li><a href="{% url 'patient-register' %}"><input type="button" value="Créer un compte"></a></li>
+      </ul>
+      {% elif user.is_authenticated and user.is_doctor or user.is_secretary  %}
       <ul class="box input-box">
         <li class="link_name">S'inscrire</li>
 

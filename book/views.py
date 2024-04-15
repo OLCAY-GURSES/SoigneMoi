@@ -200,7 +200,7 @@ class SearchView(LoginRequiredMixin, View):
         else:
             logout(request)
             messages.error(request, 'Non autorisé')
-            return render(request, 'login.html')
+            return render(request, 'book/login.html')
 
 class BookingView(LoginRequiredMixin, View):
     def get(self, request, pk):
@@ -208,7 +208,8 @@ class BookingView(LoginRequiredMixin, View):
         self.doctor = Doctor.objects.get(doctor_id=pk)
 
         # Check if profile settings are filled
-        if not (self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
+        if not (
+                self.patient.first_name and self.patient.last_name and self.patient.date_of_birth and self.patient.phone_number and self.patient.address):
             messages.error(request, 'Veuillez remplir tous les champs de votre profil avant de réserver.')
             return redirect('profile-settings')
 
@@ -223,9 +224,9 @@ class BookingView(LoginRequiredMixin, View):
         self.appointment = Appointment(patient=self.patient, doctor=self.doctor)
         self.start_date = datetime.strptime(request.POST['appoint_start_date'], '%Y-%m-%d').date()
         self.end_date = datetime.strptime(request.POST['appoint_end_date'], '%Y-%m-%d').date()
-        self.message = request.POST.get('message', '')
+        self.motif = request.POST.get('motif', '')
 
-        if not self.message:
+        if not self.motif:
             messages.error(request, 'Veuillez saisir un motif pour votre rendez-vous.')
             return redirect('booking', pk=pk)
 
@@ -246,7 +247,8 @@ class BookingView(LoginRequiredMixin, View):
             ).exists()
 
             if not self.is_present:
-                messages.error(request, 'Le médecin n\'est pas présent pendant la période sélectionnée. Veuillez choisir une autre période.')
+                messages.error(request,
+                               'Le médecin n\'est pas présent pendant la période sélectionnée. Veuillez choisir une autre période.')
                 return redirect('booking', pk=pk)
 
             self.daily_quota = 5
@@ -257,7 +259,8 @@ class BookingView(LoginRequiredMixin, View):
             ).count()
 
             if self.patient_count >= self.daily_quota:
-                messages.error(request, 'Le médecin n\'est pas disponible aux dates choisies. Veuillez sélectionner une autre date. Le planning du médecin est complet pour les jours suivants :')
+                messages.error(request,
+                               'Le médecin n\'est pas disponible aux dates choisies. Veuillez sélectionner une autre date. Le planning du médecin est complet pour les jours suivants :')
                 self.booking_url = reverse('booking', args=[pk])
                 return redirect(f'{self.booking_url}?dates_displayed=True')
 
@@ -266,7 +269,7 @@ class BookingView(LoginRequiredMixin, View):
         self.appointment.start_date = self.start_date
         self.appointment.end_date = self.end_date
         self.appointment.serial_number = generate_random_string()
-        self.appointment.message = self.message
+        self.appointment.motif = self.motif
         self.appointment.save()
 
         messages.success(request, 'Séjour réservé avec succès.')
