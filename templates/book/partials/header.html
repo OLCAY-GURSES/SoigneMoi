@@ -44,13 +44,18 @@
       <li><a href="{% url 'search' %}" style="text-decoration: none;">Prendre rendez-vous</a></li>
       {% endif %}
 
-       {% if user.is_authenticated and user.is_patient %}
-      <li><a href="{% url 'patient-dashboard' %}"style="text-decoration: none;">Patient Dashboard</a></li>
+      {% if user.is_authenticated and user.is_admin  %}
+      <li><a href="{% url 'admin:index' %}" style="text-decoration: none;">Espace administrateur</a></li>
       {% endif %}
 
+      {% if user.is_authenticated and user.is_patient %}
+      <li><a href="{% url 'patient-dashboard' %}"style="text-decoration: none;">Patient Dashboard</a></li>
+      {% endif %}
+      {% comment %}
       {% if user.is_authenticated and user.is_doctor  %}
       <li><a href="{% url 'doctor-dashboard' %}"style="text-decoration: none;">Mon Espace</a></li>
       {% endif %}
+      {% endcomment %}
 
     </ul>
   </div>
@@ -58,7 +63,7 @@
   <ul class="nav header-navbar-rht">
 
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and user.is_patient or user.is_admin %}
     <li class="nav-item">
       <a class="nav-link header-login" href="{% url 'logout' %}">Déconnexion</a>
     </li>
