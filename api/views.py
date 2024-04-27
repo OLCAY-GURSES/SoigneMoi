@@ -141,6 +141,8 @@ class DoctorDashboardView(APIView):
             patient_last_name = f" {appointment.patient.last_name}"
             patient_phone_number = f"{appointment.patient.phone_number} "
             patient_address = f"{appointment.patient.address} "
+            patient_date_of_birth = f"{appointment.patient.date_of_birth} "
+
             appointment_data = {
                 'start_date': str(appointment.start_date),
                 'end_date': str(appointment.end_date),
@@ -151,6 +153,7 @@ class DoctorDashboardView(APIView):
                 'patient_last_name': patient_last_name,
                 'patient_phone_number': patient_phone_number,
                 'patient_address': patient_address,
+                'patient_date_of_birth': patient_date_of_birth,
             }
             today_appointments_data.append(appointment_data)
 
