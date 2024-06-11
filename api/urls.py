@@ -9,10 +9,10 @@ from .views import UserViewSet, AdminViewSet, HospitalViewSet, SpecializationVie
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'admins', AdminViewSet)
-router.register(r'hospitals', HospitalViewSet)
+#router.register(r'hospitals', HospitalViewSet)
 router.register(r'specializations', SpecializationViewSet)
 router.register(r'patients', PatientViewSet)
-router.register(r'doctors', DoctorViewSet)
+#router.register(r'doctors', DoctorViewSet)
 router.register(r'doctor-time-slots', DoctorTimeSlotsViewSet)
 
 router.register(r'prescriptions', PrescriptionViewSet)
