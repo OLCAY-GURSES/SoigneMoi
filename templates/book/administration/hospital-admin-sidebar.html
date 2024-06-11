@@ -1,0 +1,46 @@
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Menu</span>
+                </li>
+                <li class="">
+                    <a href="{%url 'admin-dashboard' %}"><i class="fe fe-home"></i> <span>Tableau de board</span></a>
+                </li>
+
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-building"></i> <span>Hopitaux</span></a>
+                    <ul style="display:none;">
+                        <li><a href="{% url 'add-hospital' %}"><i class="fe fe-edit"></i> <span>Nouvelle hopital</span></a></li>
+                        <li><a href="{% url 'hospital-list' %}"><i class="fe fe-edit"></i> <span>Les hopitaux</span></a></li>
+                    </ul>
+                </li>
+
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-user-plus"></i> <span>Docteurs</span></a>
+                    <ul style="display:none;">
+                        <li><a href="{% url 'create_doctor' %}"><i class="fe fe-users"></i> <span>Créer un docteur</span></a></li>
+                        <li><a href="{% url 'doctor-list' %}"><i class="fe fe-users"></i> <span>Liste des médecins</span></a></li>
+                    </ul>
+                </li>
+
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-user-plus"></i> <span>Planning Docteur</span></a>
+                    <ul style="display:none;">
+                        <li><a href="{% url 'doctor-list-planning' %}"><i class="fe fe-users"></i> <span>Création planning</span></a></li>
+                        <li><a href="{% url 'doctor-schedule-list' %}"><i class="fe fe-users"></i> <span>Les plannings</span></a></li>
+                    </ul>
+                </li>
+
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-user-plus"></i> <span>Secretaires</span></a>
+                    <ul style="display:none;">
+                        <li><a href="{% url 'create-secretary' %}"><i class="fe fe-users"></i> <span>Créer une secretaire</span></a></li>
+                        <li><a href="{% url 'secretary-list' %}"><i class="fe fe-users"></i> <span>Liste des secretaires</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

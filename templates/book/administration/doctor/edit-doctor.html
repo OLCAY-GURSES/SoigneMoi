@@ -1,0 +1,57 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Modifier le médecin{% endblock title %}
+
+{% block content %}
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- ... -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid center">
+                <!-- ... -->
+
+                <!-- Form -->
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4">
+                                        <form method="post" novalidate>
+                                            {% csrf_token %}
+                                            {% for field in form %}
+                                                <div class="form-group">
+                                                    {{ field.label_tag }}
+                                                    {% if field.name == 'date_of_birth' %}
+                                                        <input type="date" class="form-control" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}">
+                                                    {% else %}
+                                                        {{ field }}
+                                                    {% endif %}
+                                                    {% for error in field.errors %}
+                                                        <div class="alert alert-danger">{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endfor %}
+                                            <div class="text-center">
+                                                <button type="submit" class="btn" style="background-color: #32DFFF; color: white;">Enregistrer</button>
+                                                <a href="{% url 'change-doctor-password' doctor.doctor_id %}" class="btn btn-secondary">Modifier le mot de passe</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Form -->
+            </div>
+        </div>
+        </div>
+        <!-- /Page Wrapper -->
+    </div>
+    <!-- /Main Wrapper -->
+{% endblock content %}

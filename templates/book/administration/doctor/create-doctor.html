@@ -1,0 +1,114 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+{% block title %}Ajouter Docteur{% endblock title %}
+{% block content %}
+
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- /Header -->
+        <header class="header">{% include 'book/administration/hospital-admin-navbar.html' %}</header>
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            {% include 'book/administration/hospital-admin-sidebar.html' %}
+        </aside>
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <div class="content container-fluid">
+
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-bar">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-md-12 col-12">
+                                <h2 class="breadcrumb-title" style="text-align: center">Ajouter Docteur</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Breadcrumb -->
+
+                <!-- Page Content -->
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-7 col-lg-8 col-xl-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <!-- Profile Settings Form -->
+                                        <form action="{% url 'create_doctor' %}" method="POST" enctype="multipart/form-data" id="doctor-form">
+                                            {% csrf_token %}
+
+                                            {% for field in form %}
+                                                <div class="row form-row justify-content-center">
+                                                    <div class="col-4 col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="focus-label">{{ field.label }}</label>
+                                                            {{ field }}
+                                                            {% for error in field.errors %}
+                                                                <div class="alert alert-danger">{{ error }}</div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+
+                                            <div class="submit-section">
+                                                <button type="submit" class="btn submit-btn" style="background-color: #32DFFF; color: white;">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                        <!-- /Profile Settings Form -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Content -->
+
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hospitalSelect = document.getElementById("id_hospital_name");
+            const specializationSelect = document.getElementById("id_specialization");
+
+            hospitalSelect.addEventListener("change", function() {
+                const selectedHospitalId = this.value;
+
+                // Clear current specialization options
+                specializationSelect.innerHTML = '';
+
+                // Add new specialization options
+                const hospitalSpecializations = {{ hospital_specializations|safe }};
+                if (selectedHospitalId && hospitalSpecializations.hasOwnProperty(selectedHospitalId)) {
+                    hospitalSpecializations[selectedHospitalId].forEach(specialization => {
+                        const option = new Option(specialization.specialization_name, specialization.specialization_id);
+                        specializationSelect.add(option);
+                    });
+                }
+            });
+
+            // Trigger change event to populate specializations on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedHospitalId = urlParams.get('hospital_name');
+            if (selectedHospitalId) {
+                hospitalSelect.value = selectedHospitalId;
+                hospitalSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+</body>
+
+{% endblock content %}

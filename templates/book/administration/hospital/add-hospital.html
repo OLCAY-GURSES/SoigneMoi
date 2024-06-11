@@ -1,0 +1,238 @@
+{% extends 'book/administration/admin-base.html' %}
+
+{% load static %}
+
+{% block title %}Ajouter Hôpital{% endblock title %}
+
+{% block content %}
+
+
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <div class="content container-fluid">
+
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-bar">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-md-12 col-12">
+                                <h2 class="breadcrumb-title">Nouvelle Hopitâl</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Breadcrumb -->
+
+                <!-- Page Content -->
+                <div class="call-content-full">
+                    <div class="container-lg">
+                        <div class="row-cols-6">
+                            <div class="col-md-7 col-lg-8 col-xl-12">
+                                <div class="card">
+                                    <div class="card-body">
+
+                                        <!-- Profile Settings Form -->
+                                        <form action="{% url 'add-hospital' %}" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="row form-row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="change-avatar">
+                                                            <div class="profile-img">
+                                                                <img src="{% static 'SGM/images/hospitals/default.png' %}" alt="Photo Hospital">
+                                                            </div>
+                                                            <div class="upload-img">
+                                                                <div class="change-photo-btn">
+                                                                    <span><i class="fa fa-upload"></i> Charger Photo</span>
+                                                                    <input type="file" class="upload" name="featured_image">
+                                                                </div>
+                                                                <small class="form-text text-muted">Format autorisés JPG, GIF ou PNG. Taille maximale de 2 Mo</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="min-width: 300px">Nom de l'hopitâl
+                                                                            </th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="hospital_name">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="min-width: 300px">Addresse</th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="address">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="min-width: 300px">Email</th>
+                                                                            <th style="min-width: 300px">Numéro de téléphone
+                                                                            </th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="email" name="email">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="phone_number">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title">Specialité</h4>
+                                                            <div class="specialization-info">
+                                                                <div class="row form-row specialization-cont">
+                                                                    <div class="col-12 col-md-10 col-lg-5">
+                                                                        <div class="form-group">
+                                                                            <label>Nouvelle spécialité</label>
+                                                                            <input type="text" class="form-control" id="specialization" name="specialization">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-12 col-md-2 col-lg-2">
+                                                                        <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                                                                        <a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="add-more">
+                                                                <a href="javascript:void(0);" class="add-specialization" style="color: #32DFFF;"><i class="fa fa-plus-circle" style="color: #32DFFF;"></i> Plus</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="min-width: 300px">Description
+                                                                            </th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <textarea class="form-control" rows="4" cols="50" type="text" name="description"></textarea>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="submit-section centre">
+													<button type="submit" class="btn submit-btn" style="background-color: #32DFFF; color: white;">
+														Enregistrer
+													</button>
+                                               </div>
+                                        </form>
+                                        <!-- /Profile Settings Form -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /Page Content -->
+
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+
+
+    <script>
+        // Specialization Add More
+
+        // Événement de clic sur le bouton de suppression
+        $(".specialization-info").on('click', '.trash', function() {
+            // Supprime la ligne de spécialité la plus proche du bouton de suppression cliqué
+            $(this).closest('.specialization-cont').remove();
+            return false;
+        });
+
+        // Événement de clic sur le bouton "Plus"
+        $(".add-specialization").on('click', function() {
+            // Structure HTML d'une nouvelle ligne de spécialité
+            var specializationcontent = '<div class="row form-row specialization-cont">' +
+                '<div class="col-12 col-md-10 col-lg-5">' +
+                '<div class="form-group">' +
+                '<label>Nouvelle Spécialité</label>' +
+                '<input type="text" name="specialization" class="form-control">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-12 col-md-2 col-lg-2">' +
+                '<label class="d-md-block d-sm-none d-none">&nbsp;</label>' +
+                '<a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>' +
+                '</div>' +
+                '</div>';
+
+            // Ajoute la nouvelle ligne de spécialité à la div ".specialization-info"
+            $(".specialization-info").append(specializationcontent);
+            return false;
+        });
+    </script>
+</body>
+
+{% endblock content %}

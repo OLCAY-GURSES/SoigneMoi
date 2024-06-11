@@ -1,0 +1,269 @@
+{% extends 'book/administration/admin-base.html' %}
+
+{% load static %}
+
+{% block title %}Modifier Hôpital{% endblock title %}
+
+{% block content %}
+
+{% load static %}
+
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <div class="content container-fluid">
+
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-bar">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-md-12 col-12">
+                                <h2 class="breadcrumb-title">Hopitâl : {{hospital.name}}</h2>{% include 'book/message.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Breadcrumb -->
+
+                <!-- Page Content -->
+                <div class="call-content-full">
+                    <div class="container-lg">
+                        <div class="row-cols-6">
+                            <div class="col-md-6 col-lg-10">
+                                <div class="card">
+                                    <div class="card-body">
+
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group">
+                                                <div class="change-avatar">
+                                                    <div class="profile-img">
+                                                        <img src="{{hospital.featured_image.url}}" width="225 px" alt="User Image">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Profile Settings Form -->
+                                        <form action="{% url 'edit-hospital' pk=hospital.hospital_id %}" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div>
+                                                <div class="col-12 col-md-6 col-lg-8">
+                                                    <div class="form-group">
+                                                        <div class="change-avatar">
+                                                            <div class="upload-img">
+                                                                <div class="change-photo-btn">
+                                                                    <span><i class="fa fa-upload"></i> Charger Photo</span>
+                                                                    <input type="file" class="upload" name="featured_image" value="{{featured_image}}">
+                                                                </div>
+                                                                <small class="form-text text-muted">Format autorisés JPG, GIF ou PNG . Taille maximale de 2 Mo</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="max-width: 300px;min-width: 280px;">Nom de l'hôpital</th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="hospital_name" value="{{hospital.name}}">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="max-width: 300px;min-width: 280px;">Addresse</th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="address" value="{{hospital.address}}">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="max-width: 300px;min-width: 280px;">Email</th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="email" name="email" value="{{hospital.email}}">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card card-table">
+                                                        <div class="card-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-center">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="max-width: 300px;min-width: 280px;">Numéro de téléphone</th>
+                                                                            <th style="min-width: 50px;"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="phone_number" value="{{hospital.phone_number}}">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title">Spécialités</h4>
+                                                            <div class="specialization-info">
+                                                                {% for specialization in specializations %}
+                                                                <div class="row form-row specialization-cont">
+                                                                    <div class="col-12 col-md-8 col-lg-11">
+                                                                        <div class="form-group">
+                                                                            <label>Modifier la spécialité</label>
+                                                                            <input type="text" class="form-control" name="specialization_name" value="{{ specialization.specialization_name }}">
+                                                                            <input type="hidden" name="specialization_id" value="{{ specialization.specialization_id }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-2 col-lg-1">
+                                                                        <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                                                                        <a href="{% url 'delete-specialization' pk=specialization.specialization_id pk2=hospital.hospital_id %}" onclick="return confirm('Are you sure you want to Delete?');" class="btn btn-danger">
+                                                                            <i class="far fa-trash-alt"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                            <div class="add-more">
+                                                                <a href="javascript:void(0);" class="add-specializations" style="color: #32DFFF;"><i class="fa fa-plus-circle" style="color: #32DFFF;"></i> Plus</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title">Description</h4>
+                                                            <div class="">
+                                                                <div class="row form-row ">
+
+                                                                    <div class="col-12 col-md-12 col-lg-12">
+                                                                        <div class="form-group">
+
+                                                                            <textarea type="text" rows="5" class="form-control" name="description">{{hospital.description}}</textarea>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="submit-section">
+                                                    <button type="submit" class="btn submit-btn" style="background-color: #32DFFF; color: white;">
+                                                        Valider la mise a jour
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!-- /Profile Settings Form -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /Page Content -->
+
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        {% endfor %}
+    </script>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        (function($) {
+            "use strict";
+
+            // Specialization Add More
+            $(".specialization-info").on('click', '.trash', function() {
+                $(this).closest('.specialization-cont').remove();
+                return false;
+            });
+
+            $(".add-specializations").on('click', function() {
+                var specializationcontent = '<div class="row form-row specialization-cont">' +
+                    '<div class="col-12 col-md-10 col-lg-5">' +
+                    '<div class="form-group">' +
+                    '<label>Nouvelle spécialité</label>' +
+                    '<input type="text" name="new_specializations[]" class="form-control">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-12 col-md-2 col-lg-2">' +
+                    '<label class="d-md-block d-sm-none d-none">&nbsp;</label>' +
+                    '<a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>' +
+                    '</div>' +
+                    '</div>';
+
+                $(".specialization-info").append(specializationcontent);
+                return false;
+            });
+        })(jQuery);
+    </script>
+</body>
+
+{% endblock content %}

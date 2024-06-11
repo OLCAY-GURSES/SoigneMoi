@@ -1,0 +1,35 @@
+{% load static %}
+
+<!-- Logo -->
+<div class="header-left">
+    <a href="{% url 'admin-dashboard' %}" class="logo">
+        <img src="{% static 'SGM/images/LOGO/logo.png' %}" alt="Logo">
+    </a>
+</div>
+<!-- /Logo -->
+
+<a href="javascript:void(0);" id="toggle_btn">
+    <i class="fe fe-text-align-left"></i>
+</a>
+
+<!-- Mobile Menu Toggle -->
+<a class="mobile_btn" id="mobile_btn">
+    <i class="fe fe-text-align-left"></i>
+</a>
+<!-- /Mobile Menu Toggle -->
+
+<!-- Header Right Menu -->
+<ul class="nav user-menu">
+    <!-- User Menu -->
+    <li class="nav-item dropdown has-arrow" style="margin-right: 20px;">
+        <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+            <span class="text-muted mb-0">Administrateur</span>
+        </a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{%url 'hospital_home' %}">Voir le site</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a>
+        </div>
+    </li>
+    <!-- /User Menu -->
+</ul>
+<!-- /Header Right Menu -->

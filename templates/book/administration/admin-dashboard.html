@@ -1,0 +1,166 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Admin dasboard{% endblock title %}
+
+{% block content %}
+
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">{% include 'book/administration/hospital-admin-navbar.html' %}</header>
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            {% include 'book/administration/hospital-admin-sidebar.html' %}
+        </aside>
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {% include 'book/message.html' %}
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="row">
+                    <div class="col-md-12 d-flex">
+                        <!-- Recent Orders -->
+                        <div class="card card-table flex-fill">
+                            <div class="card-header">
+                                <h4 class="card-title">Hôpital</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Addresse</th>
+                                                <th>Email</th>
+                                                <th>Numéro de téléphone</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for hospital in hospitals %}
+                                            <tr>
+                                                <td>
+                                                    <h2 class="table-avatar">
+                                                        <a href="#" class="avatar avatar-sm mr-2">
+                                                            <img class="avatar-img rounded-circle" src="{{hospital.featured_image.url}}" alt="User Image" />
+                                                        </a>
+                                                        <a href="#">{{hospital.name}}</a>
+                                                    </h2>
+                                                </td>
+                                                <td>{{hospital.address}}</td>
+                                                <td>{{hospital.email}}</td>
+                                                <td>{{hospital.phone_number}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Recent Orders -->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <!-- Recent Orders -->
+                        <div class="card card-table flex-fill">
+                            <div class="card-header">
+                                <h4 class="card-title">Médecins</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Prénom</th>
+                                                <th>Spécialité</th>
+                                                <th>Numéro de téléphone</th>
+                                                <th>Hôpital</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for doctor in doctors %}
+                                            <tr>
+                                                <td>{{doctor.last_name}}</td>
+                                                <td>{{doctor.first_name}}</td>
+                                                <td>{{doctor.specialization.specialization_name}}</td>
+                                                 <td>{{doctor.phone_number}}</td>
+                                                <td>{{doctor.hospital_name}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Recent Orders -->
+                    </div>
+
+                    <div class="col-md-6 d-flex">
+                        <!-- Recent Orders -->
+                        <div class="card card-table flex-fill">
+                            <div class="card-header">
+                                <h4 class="card-title">Secretaires</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Prénom</th>
+                                                <th>Email</th>
+                                                <th>Numéro de téléphone</th>
+                                                <th>Hôpital</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for secretary in secretarys %}
+                                            <tr>
+                                                <td>{{secretary.last_name}}</td>
+                                                <td>{{secretary.first_name}}</td>
+                                                <td>{{secretary.user.email}}</td>
+                                                <td>{{secretary.phone_number}}</td>
+                                                <td>{{secretary.hospital_name}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Recent Orders -->
+                    </div>
+                </div>
+
+                {% if messages %}
+                <script>
+                    {% for message in messages %}
+                    $(document).ready(function () {
+                        $('.toast').toast('show');
+                    });
+                    {% endfor %}
+                </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+</body>
+
+{% endblock content %}

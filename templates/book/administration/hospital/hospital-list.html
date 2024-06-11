@@ -1,0 +1,109 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Liste des Hôpitaux{% endblock title %}
+
+{% block content %}
+
+{% load static %}
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <div class="content container-fluid">
+                <div class="">
+                    <a href="{% url 'add-hospital' %}" class="fe fe-plus btn float-right mt-2" style="background-color: #32DFFF; color: white">Nouvelle Hopital</a>
+                </div>
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3 class="page-title">Hopitaux</h3>
+                            {% include 'book/message.html' %}
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="datatable table table-hover table-center mb-0">
+                                        <tr style="text-align: center;">
+                                            <th style="text-align: left;">Nom</th>
+                                            <th>Addresse</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                            <th>Mettre a jour</th>
+                                            <th>Supprimer Hospital</th>
+                                        </tr>
+
+                                        {% for hospital in hospitals %}
+                                        <tr style="text-align: center;">
+                                            <td style="text-align: left;">
+                                                <h2 class="table-avatar">
+                                                    <a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{hospital.featured_image.url}}" alt="User Image"></a>
+                                                    <a href="#">{{hospital.name}}</a>
+                                                </h2>
+                                            </td>
+                                            <td>{{hospital.address}}</td>
+                                            <td>{{hospital.email}}<br>
+                                            <td>{{hospital.phone_number}}</td>
+                                            <td><a href="{% url 'edit-hospital' pk=hospital.hospital_id %}" class="btn btn-sm" style="background-color: #32DFFF; color: white;">Modifier</a></td>
+                                            <td class="text-center">
+                                                <div class="actions">
+                                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete_modal{{hospital.hospital_id}}">
+                                                        <i class="fas fa-trash"></i> Supprimer
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade" id="delete_modal{{hospital.hospital_id}}" aria-hidden="true" role="dialog">
+                                            <form method="POST" action="{% url 'delete-hospital' pk=hospital.hospital_id %}">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+                                                            <div class="form-content p-2">
+                                                                <h4 class="modal-title" style="display:flex;justify-content: center;align-items: center;">Supprimer</h4>
+                                                                <p class="mb-4" style="display:flex;justify-content: center;align-items: center;">Êtes-vous sûr de vouloir de le supprimer ?</p>
+                                                                <div style="display:flex;justify-content: center">
+                                                                    <button type="submit" class="btn" style="margin-right: 5px;background-color: #32DFFF; color: white;">Valider</button>
+                                                                    <button type="button" class="btn btn-danger" style="margin-left: 5px;" data-dismiss="modal">Annuler</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+        $(document).ready(function() {
+            $('.toast').toast('show');
+        });
+        {% endfor %}
+    </script>
+    {% endif %}
+
+</body>
+
+{% endblock content %}

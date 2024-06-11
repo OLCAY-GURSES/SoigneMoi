@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+{% load static %}
+<head>
+
+
+	<meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+	<title>Soigne Moi</title>
+
+	<!-- Favicon -->
+
+	<link rel="shortcut icon" type="image/x-icon" href="{% static 'SGM/images/LOGO/icon.png' %}">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/css/bootstrap.min.css' %}">
+	<!-- Datatables CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/plugins/datatables/datatables.min.css'%}">
+	<!-- Fontawesome CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/css/font-awesome.min.css' %}">
+	<!-- Fontawesome CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/plugins/fontawesome/css/fontawesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'SGM/plugins/fontawesome/css/all.min.css' %}">
+
+
+	<!-- Feathericon CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/admin_assets/css/feathericon.min.css'%}"/>
+
+	<link rel="stylesheet" href="{% static 'SYSTEM/plugins/morris/morris.css'%}"/>
+	<link rel="stylesheet" href="{% static 'SYSTEM/css/add-hospital.css'%}">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="{% static 'SYSTEM/css/style.css' %}">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
+
+	<title>{% block title %} {% endblock title %}</title>
+
+</head>
+
+<body>
+
+	<!-- Header -->
+
+	<header class="header">{% include 'book/administration/hospital-admin-navbar.html' %}</header>
+	<!-- /Header -->
+
+	<!-- Sidebar -->
+	<aside class="sidebar" id="sidebar">
+		{% include 'book/administration/hospital-admin-sidebar.html' %}
+	</aside>
+	<!-- /Sidebar -->
+
+	{% block content %}
+  	{% endblock content %}
+
+	<!-- /Main Wrapper -->
+
+	<!-- jQuery -->
+	<script src="{% static 'SYSTEM/js/jquery-3.2.1.min.js' %}"></script>
+
+	<!-- Bootstrap Core JS -->
+	<script src="{% static 'SYSTEM/js/popper.min.js' %}"></script>
+	<script src="{% static 'SYSTEM/js/bootstrap.min.js' %}"></script>
+
+	<!-- Slimscroll JS -->
+
+	<script src="{% static 'SYSTEM/plugins/slimscroll/jquery.slimscroll.min.js'%}"></script>
+
+	<script src="{% static 'SYSTEM/admin_assets/js/script.js'%}"></script>
+
+	<!-- Datatables JS -->
+		<script src="{% static 'SYSTEM/plugins/datatables/jquery.dataTables.min.js'%}"></script>
+		<script src="{% static 'SYSTEM/plugins/datatables/datatables.min.js'%}"></script>
+
+	<script src="{% static 'SGM/js/add-more.js' %}"></script>
+
+	<!-- Custom JS -->
+	<script src="{% static 'SYSTEM/js/script.js' %}"></script>
+
+	<script src="{% static 'SYSTEM/js/raphael.min.js'%}"></script>
+
+	<script src="{% static 'SYSTEM/js/morris.min.js'%}"></script>
+
+	<script src="{% static 'SYSTEM/js/morris-init.js'%}"></script>
+
+	<!-- Bootstrap JS -->
+<!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>-->
+
+
+
+	<!-- alert js -->
+	<script>
+		var x = document.getElementById('CredentialCheck');
+		if (x.style.display === "none") {
+			x.style.display = "block";
+		}
+		$('#CredentialCheck').delay(4000).fadeOut('slow');
+	</script>
+
+	<!-- show password js -->
+	<script>
+		function myFunction11() {
+		var x = document.getElementById('myInput');
+		if (x.type === "password") {
+			x.type = "text";
+		} else {
+			x.type = "password";
+		}
+		}
+		</script>
+
+
+	{% if messages %}
+	<script>
+		{% for message in messages %}
+			$(document).ready(function () {
+				$('.toast').toast('show');
+			});
+		{% endfor %}
+	</script>
+  {% endif %}
+
+
+
+
+</body>
+
+
+</html>

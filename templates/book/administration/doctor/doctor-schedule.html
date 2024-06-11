@@ -1,0 +1,57 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Planning du médecin{% endblock title %}
+
+{% block content %}
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- ... -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3 class="page-title">Planning du médecin {{ doctor.first_name }} {{ doctor.last_name }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <!-- Form -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Ajouter un nouveau planning</h4>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{ form.non_field_errors }}
+                                    <div class="form-group">
+                                        {{ form.doc_start_date.errors }}
+                                        {{ form.doc_start_date.label_tag }}
+                                        <input type="date" name="doc_start_date" id="id_doc_start_date" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.doc_end_date.errors }}
+                                        {{ form.doc_end_date.label_tag }}
+                                        <input type="date" name="doc_end_date" id="id_doc_end_date" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn" style="background-color: #32DFFF; color: white;">Enregistrer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Form -->
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+    </div>
+    <!-- /Main Wrapper -->
+</body>
+{% endblock content %}

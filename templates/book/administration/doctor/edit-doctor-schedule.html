@@ -1,0 +1,63 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Modifier le planning du médecin {{ doctor_full_name }}{% endblock title %}
+
+{% block content %}
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+    <!-- Header -->
+    <header class="header">
+        {% include 'book/administration/hospital-admin-navbar.html' %}
+    </header>
+    <!-- /Header -->
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        {% include 'book/administration/hospital-admin-sidebar.html' %}
+    </aside>
+    <!-- /Sidebar -->
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Modifier le planning du médecin {{ doctor_full_name }}</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.non_field_errors }}
+                                {% for field in form.visible_fields %}
+                                    <div class="form-group">
+                                        {{ field.label_tag }}
+                                        {% if field.name == 'doc_start_date' or field.name == 'doc_end_date' %}
+                                            <input type="date" name="{{ field.name }}" id="{{ field.auto_id }}" class="form-control" {% if field.field.required %}required{% endif %} value="{{ field.value|date:'Y-m-d' }}">
+                                        {% else %}
+                                            {{ field }}
+                                        {% endif %}
+                                        {{ field.errors }}
+                                    </div>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Wrapper -->
+</div>
+<!-- /Main Wrapper -->
+{% endblock content %}

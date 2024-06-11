@@ -1,0 +1,142 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Liste des plannings des médecins{% endblock title %}
+
+{% block content %}
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+    <!-- Header -->
+    <header class="header">
+        {% include 'book/administration/hospital-admin-navbar.html' %}
+    </header>
+    <!-- /Header -->
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        {% include 'book/administration/hospital-admin-sidebar.html' %}
+    </aside>
+    <!-- /Sidebar -->
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Liste des plannings des médecins</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="datatable table table-hover table-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom du médecin</th>
+                                            <th>Prénom du médecin</th>
+                                            <th>Spécialité - Hôpital</th>
+                                            <th>Date de début</th>
+                                            <th>Date de fin</th>
+                                            <th>Mettre a jour</th>
+                                            <th>Supprimer le planning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for doctor in doctors %}
+                                            {% for time_slot in doctor.doctortimeslots_set.all %}
+                                            <tr>
+                                                <td>{{ doctor.last_name }}</td>
+                                                <td>{{ doctor.first_name }}</td>
+                                                <td>{{ doctor.specialization }}</td>
+                                                <td>{{ time_slot.doc_start_date|date:'d-m-Y' }}</td>
+                                                <td>{{ time_slot.doc_end_date|date:'d-m-Y' }}</td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-sm" style="background-color: #32DFFF; color: white;" href="#" data-toggle="modal" data-target="#editModal-{{ time_slot.id }}">Modifier</button>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-sm btn-danger" style=" color: white;" href="#" data-toggle="modal" data-target="#deleteModal-{{ time_slot.id }}"><i class="fas fa-trash"></i> Supprimer</button>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal Modifier -->
+                                            <div class="modal fade" id="editModal-{{ time_slot.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editModalLabel">Modifier les dates</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form method="post" action="{% url 'update-time-slots' time_slot.id %}">
+                                                            {% csrf_token %}
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label for="startDate-{{ time_slot.id }}">Date de début</label>
+                                                                    <input type="date" class="form-control" id="startDate-{{ time_slot.id }}" name="startDate" value="{{ time_slot.doc_start_date|date:'Y-m-d' }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="endDate-{{ time_slot.id }}">Date de fin</label>
+                                                                    <input type="date" class="form-control" id="endDate-{{ time_slot.id }}" name="endDate" value="{{ time_slot.doc_end_date|date:'Y-m-d' }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                                                                <button type="submit" class="btn" style="background-color: #32DFFF; color: white;">Enregistrer les modifications</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal Supprimer -->
+                                            <div class="modal fade" id="deleteModal-{{ time_slot.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1000px;">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Êtes-vous sûr de vouloir supprimer le créneau horaire {{ time_slot.doc_start_date|date:"d-m-Y" }} - {{ time_slot.doc_end_date|date:"d-m-Y" }} pour le médecin {{ doctor.first_name }} {{ doctor.last_name }} ?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                            <form action="{% url 'delete-timeslot' time_slot.id %}" method="post">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Wrapper -->
+</div>
+<!-- /Main Wrapper -->
+{% endblock content %}

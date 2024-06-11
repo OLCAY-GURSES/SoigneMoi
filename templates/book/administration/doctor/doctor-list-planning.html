@@ -1,0 +1,82 @@
+{% extends 'book/administration/admin-base.html' %}
+{% load static %}
+
+{% block title %}Liste des médecins{% endblock title %}
+
+{% block content %}
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            {% include 'book/administration/hospital-admin-navbar.html' %}
+        </header>
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            {% include 'book/administration/hospital-admin-sidebar.html' %}
+        </aside>
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3 class="page-title">Création planning</h3>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="datatable table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom du médecin</th>
+                                                <th>Prénom du médecin</th>
+                                                <th>Spécialité - Hôpital</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for doctor in doctors %}
+                                            <tr>
+                                                <td>{{ doctor.last_name }}</td>
+                                                <td>{{ doctor.first_name }}</td>
+                                                <td>{{ doctor.specialization }}</td>
+                                                <td>
+                                                    <div class="table-action">
+                                                        {% if doctor.doctor_id %}
+                                                            <a href="{% url 'doctor-schedule' doctor_id=doctor.doctor_id %}" class="btn " style="background-color: #32DFFF; color: white;">
+                                                                <i class="fas fa-edit"></i> Créer
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="text-danger">ID manquant</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+    </div>
+    <!-- /Main Wrapper -->
+</body>
+{% endblock content %}
