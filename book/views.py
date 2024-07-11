@@ -342,9 +342,7 @@ class AdminDashboardView(LoginRequiredMixin, View):
                 'secretarys':secretarys,
             }
             return render(request, 'book/administration/admin-dashboard.html', context)
-        elif request.user.is_secretary:
-            messages.error(request, 'Vous n\'êtes pas autorisé à accéder à cette page ')
-            return redirect('secretary-dashboard')
+
         else:
             messages.error(request, 'Vous n\'êtes pas autorisé à accéder à cette page')
             return redirect('login')
